@@ -4,7 +4,7 @@
   <title><![CDATA[Cramer on Code]]></title>
   <link href="http://steventcramer.github.io//atom.xml" rel="self"/>
   <link href="http://steventcramer.github.io//"/>
-  <updated>2015-08-23T13:02:37-04:00</updated>
+  <updated>2015-08-23T13:08:03-04:00</updated>
   <id>http://steventcramer.github.io//</id>
   <author>
     <name><![CDATA[Steven T. Cramer]]></name>
@@ -18,7 +18,7 @@
     <link href="http://steventcramer.github.io//blog/2015/08/23/hello-github-blog/"/>
     <updated>2015-08-23T13:01:41-04:00</updated>
     <id>http://steventcramer.github.io//blog/2015/08/23/hello-github-blog</id>
-    <content type="html"><![CDATA[
+    <content type="html"><![CDATA[<p>Creating a github blog is actually much more trouble than it should be.  If you are wanting to blog versus learning Ruby, Jekyll, git and more then don&rsquo;t use it.  I am currently using Octopress but would quickly switch if the configuration and deployment were simplified by another option.</p>
 ]]></content>
   </entry>
   
