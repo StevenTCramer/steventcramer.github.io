@@ -1,24 +1,102 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Cramer on Code]]></title>
-  <link href="http://steventcramer.github.io//atom.xml" rel="self"/>
-  <link href="http://steventcramer.github.io//"/>
-  <updated>2015-08-23T15:10:34-04:00</updated>
-  <id>http://steventcramer.github.io//</id>
-  <author>
-    <name><![CDATA[Steven T. Cramer]]></name>
-    
-  </author>
-  <generator uri="http://octopress.org/">Octopress</generator>
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Building MVC Jimmy Style - Cramer on Code</title>
+  <meta name="author" content="Steven T. Cramer">
 
   
-  <entry>
-    <title type="html"><![CDATA[Building MVC Jimmy Style]]></title>
-    <link href="http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc/"/>
-    <updated>2015-08-23T13:13:37-04:00</updated>
-    <id>http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc</id>
-    <content type="html"><![CDATA[<p>2015-07-18</p>
+  <meta name="description" content="Creating a Jimmy Bogard style MVC template application">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Cramer on Code" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', '66500618']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Cramer on Code</a></h1>
+  
+    <h2>Software Development blog</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="steventcramer.github.io/">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Building MVC Jimmy Style</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-08-23T13:13:37-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>1:13 pm</span></time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>2015-07-18</p>
 
 <p>This blog is a step by step tutorial that transforms a default MVC 5 application into Jimmy Bogard&rsquo;s Feature oriented configuration as described in his <a href="https://lostechies.com/jimmybogard/2015/07/02/ndc-talk-on-solid-in-slices-not-layers-video-online/">presentation</a>. The sample project he has located <a href="https://github.com/jbogard/ContosoUniversity" title="here">here</a> was used to guide the way.  The VSIX package and source code of this presentation are available <a href="http://TBD">here</a>.</p>
 
@@ -27,10 +105,10 @@
 <h2>Layers to Features</h2>
 
 <p><strong>From:</strong>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/Layers.png" alt="NewProject" /></p>
+<img src="/assets/pictures/jimmy-mvc/Layers.png" alt="NewProject" /></p>
 
 <p><strong>To:</strong>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/Features.png" alt="NewProject" /></p>
+<img src="/assets/pictures/jimmy-mvc/Features.png" alt="NewProject" /></p>
 
 <!-- more -->
 
@@ -64,7 +142,7 @@ Post = Write = Command</p>
 
 <p>The MediatR Nuget package will be used to implement CQRS light.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MediatR.png" alt="MediatR" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/MediatR.png" alt="MediatR" /></p>
 
 <p>This should all become clear as we implement. Let&rsquo;s get started.</p>
 
@@ -74,21 +152,21 @@ Post = Write = Command</p>
 
 <p> Create New Project named JimmyMvc</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/NewProject.png" alt="NewProject" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/NewProject.png" alt="NewProject" /></p>
 
 <p>Choose <code>MVC</code> and Press <code>Change Authentication</code> and select &ldquo;No Authentication&rdquo;</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/SelectTemplate.png" alt="NewProject" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/SelectTemplate.png" alt="NewProject" /></p>
 
 <p>Deselect <code>Host in the cloud</code></p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/NoAuthentication.png" alt="NewProject" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/NoAuthentication.png" alt="NewProject" /></p>
 
 <p>Select Ok to create the project.</p>
 
 <p>Run the app to confirm it works as is.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/ScreenShot.png" alt="NewProject" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/ScreenShot.png" alt="NewProject" /></p>
 
 <p>Select <em>Tools->NuGet Package Manager->Package Manager Console</em> and enter:</p>
 
@@ -108,7 +186,7 @@ Post = Write = Command</p>
 
 <p>Rename the <code>Views</code> folder to <code>Features</code></p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/FeatureFolder.png" alt="NewProject" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/FeatureFolder.png" alt="NewProject" /></p>
 
 <p>So now if you run the app you will get an error:</p>
 
@@ -138,7 +216,7 @@ Post = Write = Command</p>
 <p>To fix this we change the view engine to one that looks in the proper location:</p>
 
 <p>Create a new root folder named <code>Infrastructure</code>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/InfrastructureFolder.png" alt="NewProject" /></p>
+<img src="/assets/pictures/jimmy-mvc/InfrastructureFolder.png" alt="NewProject" /></p>
 
 <p>Inside the Infrastructure folder Create new class named: <code>FeatureRazorViewEngine</code></p>
 
@@ -412,7 +490,7 @@ Post = Write = Command</p>
 
 <h3>Class Diagram</h3>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/Main.png" alt="Model" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/Main.png" alt="Model" /></p>
 
 <p>Granted this model is pretty simple in that the behavior is just CRUD. The use of the ApprovalListTemplate will have more domain behavior and possibly could be the topic of a future blog.</p>
 
@@ -429,17 +507,17 @@ Post = Write = Command</p>
 <h3>Add Entity Framework 6</h3>
 
 <p>Create a root folder named <code>Entities</code> and select it.
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/EntitiesFolder.png" alt="Model" /></p>
+<img src="/assets/pictures/jimmy-mvc/EntitiesFolder.png" alt="Model" /></p>
 
 <p>Press Ctrl-Shift-A To add a new item.</p>
 
 <p>Select Visual C#->Data-> ADO.NET Entity Data Model And Name it &ldquo;Model&rdquo;</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/AddEntity.png" alt="Model" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/AddEntity.png" alt="Model" /></p>
 
 <p>Select Empty Code First model and then Finish</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/EmptyCodeFirst.png" alt="Model" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/EmptyCodeFirst.png" alt="Model" /></p>
 
 <p>This will add the Entity Framework Nuget package to your project and Create a <code>Model.cs</code> file and update your <code>Web.config</code></p>
 
@@ -448,7 +526,7 @@ Post = Write = Command</p>
 <h3>DelegateDecompiler.EntityFramework</h3>
 
 <p>Install <a href="https://www.nuget.org/packages/DelegateDecompiler.EntityFramework/0.16.0" title="Nuget">Nuget DelegateDecompiler.EntityFramework</a> See the <a href="https://github.com/hazzik/DelegateDecompiler" title="Delegate Decompile">github</a> page.
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/DelegateDecompilerNuget.png" alt="Model" /></p>
+<img src="/assets/pictures/jimmy-mvc/DelegateDecompilerNuget.png" alt="Model" /></p>
 
 <p>This will give you the <code>Computed</code> attribute and improved linq operations with it.</p>
 
@@ -740,9 +818,9 @@ Post = Write = Command</p>
 
 <p>Execute the application now.  And the database should be created and populated with data.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/DatabaseCreated.png" alt="Database Created" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/DatabaseCreated.png" alt="Database Created" /></p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/UserData.png" alt="Database Created" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/UserData.png" alt="Database Created" /></p>
 
 <p>Lets get started implementing our first Feature and building the infrastructure needed to support it.</p>
 
@@ -752,7 +830,7 @@ Post = Write = Command</p>
 
 <p>We will store all of the Features in the Features folder organized by the Entity/Aggregate root of which they are associated. So add a <code>User</code> folder under the Features folder.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/UserFolder.png" alt="Database Created" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/UserFolder.png" alt="Database Created" /></p>
 
 <p>Add a class named <code>Index</code> to the <code>User</code> folder.  This will contain the Features logic.</p>
 
@@ -823,7 +901,7 @@ Post = Write = Command</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Execute the app and attempt to navigate to the Users page. <img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/UsersLink.png" alt="Users page" /></p>
+<p>Execute the app and attempt to navigate to the Users page. <img src="/assets/pictures/jimmy-mvc/UsersLink.png" alt="Users page" /></p>
 
 <p>You will get <code>The resource cannot be found.</code> error. This is because the controller can not be found using our Controller Factory.  The current factory is looking for a controller of type &ldquo;JimmyMvc.Features.User.UiController&rdquo; and an method named &ldquo;Index&rdquo;.</p>
 
@@ -1163,24 +1241,24 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 <h4>FluentValidation.MVC5</h4>
 
 <p><a href="http://github.com/JeremySkinner/FluentValidation">FluentValidation.MVC5</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/FluentValidation.MVC5Nuget.png" alt="FluentValidation.MVC5 Nuget" /></p>
+<img src="/assets/pictures/jimmy-mvc/FluentValidation.MVC5Nuget.png" alt="FluentValidation.MVC5 Nuget" /></p>
 
 <h4>lodash</h4>
 
 <p><a href="https://lodash.com/">lodash</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/lodashNuget.png" alt="lodash Nuget" /></p>
+<img src="/assets/pictures/jimmy-mvc/lodashNuget.png" alt="lodash Nuget" /></p>
 
 <p>this will add the loadash.js file to the <code>Scripts</code> directory.</p>
 
 <h4>Modernizr</h4>
 
 <p><a href="http://modernizr.com/">Modernizr</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/ModernizrNuget.png" alt="Modernizr Nuget" /></p>
+<img src="/assets/pictures/jimmy-mvc/ModernizrNuget.png" alt="Modernizr Nuget" /></p>
 
 <h4>Microsoft ASP.NET MVC Futures</h4>
 
 <p><a href="https://www.nuget.org/packages/Microsoft.AspNet.Mvc.Futures/">Microsoft ASP.NET MVC Futures 5.1.0-rc1</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MicrosoftAspNetMvcFuturesNuget.png" alt="FluentValidation.MVC5 Nuget" /></p>
+<img src="/assets/pictures/jimmy-mvc/MicrosoftAspNetMvcFuturesNuget.png" alt="FluentValidation.MVC5 Nuget" /></p>
 
 <p>Check for updates on all nuget packages.  Do not include pre-release versions unless stated.  Build Run and confirm the site works.</p>
 
@@ -1189,11 +1267,11 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 <p>StructureMap is used as the Ioc container in this template.  It could be replaced with Unity or Ninject (samples to come later&hellip; maybe)</p>
 
 <p><a href="https://www.nuget.org/packages/StructureMap.MVC5/3.1.1.134">StructureMap.MVC5</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/StructureMap.MVC5Nuget.png" alt="StructureMap.MVC5" /></p>
+<img src="/assets/pictures/jimmy-mvc/StructureMap.MVC5Nuget.png" alt="StructureMap.MVC5" /></p>
 
 <p>This adds 4 dependent packages and also adds the files displayed below.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/StructureMap.MVC5Files.png" alt="StructureMap.MVC5" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/StructureMap.MVC5Files.png" alt="StructureMap.MVC5" /></p>
 
 <p>Now run <code>Update-Package</code> to update to the latest version of the dependent packages.</p>
 
@@ -1342,14 +1420,14 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 <h3>PagedList.MVC</h3>
 
 <p><a href="https://www.nuget.org/packages/PagedList.Mvc/4.5.0">PagedList.MVC</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/PagedListMvcNuget.png" alt="PagedListMvcNuget" /></p>
+<img src="/assets/pictures/jimmy-mvc/PagedListMvcNuget.png" alt="PagedListMvcNuget" /></p>
 
 <p>This will also add a PagedList.css file to your project.</p>
 
 <h3>Automapper.EF6</h3>
 
 <p><a href="https://www.nuget.org/packages/AutoMapper.EF6/">Automapper.EF6</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/AutoMapper.EF6Nuget.png" alt="AutoMapper.EF6Nuget" /></p>
+<img src="/assets/pictures/jimmy-mvc/AutoMapper.EF6Nuget.png" alt="AutoMapper.EF6Nuget" /></p>
 
 <p>Again run <code>Update-Package</code></p>
 
@@ -1359,7 +1437,7 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 
 <p>Create the <code>Mapping</code> folder under the Infrastructure folder</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MappingFolder.png" alt="MediatRNuget" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/MappingFolder.png" alt="MediatRNuget" /></p>
 
 <p>Create <code>MapperExtensions.cs</code> in the <code>Mapping</code> folder as follows:</p>
 
@@ -1608,12 +1686,12 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 <h3>MediatR</h3>
 
 <p><a href="https://www.nuget.org/packages/MediatR">MediatR</a> This blog we use the 2.0.2 version
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MediatRNuget.png" alt="MediatRNuget" /></p>
+<img src="/assets/pictures/jimmy-mvc/MediatRNuget.png" alt="MediatRNuget" /></p>
 
 <h3>HtmlTags Nuget</h3>
 
 <p><a href="https://www.nuget.org/packages/HtmlTags/">HtmlTags</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/HtmlTagsNuget.png" alt="HtmlTags" /></p>
+<img src="/assets/pictures/jimmy-mvc/HtmlTagsNuget.png" alt="HtmlTags" /></p>
 
 <p>If you would like to learn and understand the benefits of HtmlTags read this excellent <a href="http://lostechies.com/jimmybogard/2013/07/18/conventional-html-in-asp-net-mvc-a-primer/">series of articles on LosTechies.com</a></p>
 
@@ -1621,7 +1699,7 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 
 <p>Add the Tags folder under Infrastructure.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/TagsFolder.png" alt="HtmlTags" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/TagsFolder.png" alt="HtmlTags" /></p>
 
 <h4>HtmlTagExtensions</h4>
 
@@ -2515,7 +2593,7 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 
 <p>Create <code>HtmlHelperExtensions</code> class under the Infrastructure folder</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/HtmlHelperExtensions.png" alt="MediatRNuget" /></p>
+<p><img src="/assets/pictures/jimmy-mvc/HtmlHelperExtensions.png" alt="MediatRNuget" /></p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -5935,18 +6013,188 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 
 <p>Visual Studio 2015
 2015-08-10</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Hello Github Blog]]></title>
-    <link href="http://steventcramer.github.io//blog/2015/08/23/hello-github-blog/"/>
-    <updated>2015-08-23T13:01:41-04:00</updated>
-    <id>http://steventcramer.github.io//blog/2015/08/23/hello-github-blog</id>
-    <content type="html"><![CDATA[<p>Creating a github blog is actually much more trouble than it should be.  If you are wanting to blog versus learning Ruby, Jekyll, git and more then don&rsquo;t use it.  I am currently using Octopress but would quickly switch if the configuration and deployment were simplified by another option.</p>
+</div>
 
-<p><a href="https://github.com/jekyll/jekyll/issues/2551">https://github.com/jekyll/jekyll/issues/2551</a></p>
-]]></content>
-  </entry>
+
+  <footer>
+    <p class="meta">
+      
   
-</feed>
+
+<span class="byline author vcard">Posted by <span class="fn">Steven T. Cramer</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-08-23T13:13:37-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>1:13 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/web/'>web</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc/" data-via="StevenTCramer" data-counturl="http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/08/23/hello-github-blog/" title="Previous Post: Hello Github Blog">&laquo; Hello Github Blog</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/08/23/jimmy-mvc/">Building MVC Jimmy Style</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/08/23/hello-github-blog/">Hello Github Blog</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/StevenTCramer">@StevenTCramer</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'StevenTCramer',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/StevenTCramer?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2015 - Steven T. Cramer -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'crameroncode';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc/';
+        var disqus_url = 'http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

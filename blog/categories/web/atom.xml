@@ -1,0 +1,3671 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Web | Cramer on Code]]></title>
+  <link href="http://steventcramer.github.io//blog/categories/web/atom.xml" rel="self"/>
+  <link href="http://steventcramer.github.io//"/>
+  <updated>2015-08-23T15:10:34-04:00</updated>
+  <id>http://steventcramer.github.io//</id>
+  <author>
+    <name><![CDATA[Steven T. Cramer]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Building MVC Jimmy Style]]></title>
+    <link href="http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc/"/>
+    <updated>2015-08-23T13:13:37-04:00</updated>
+    <id>http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc</id>
+    <content type="html"><![CDATA[<p>2015-07-18</p>
+
+<p>This blog is a step by step tutorial that transforms a default MVC 5 application into Jimmy Bogard&rsquo;s Feature oriented configuration as described in his <a href="https://lostechies.com/jimmybogard/2015/07/02/ndc-talk-on-solid-in-slices-not-layers-video-online/">presentation</a>. The sample project he has located <a href="https://github.com/jbogard/ContosoUniversity" title="here">here</a> was used to guide the way.  The VSIX package and source code of this presentation are available <a href="http://TBD">here</a>.</p>
+
+<h1>Background</h1>
+
+<h2>Layers to Features</h2>
+
+<p><strong>From:</strong>
+<img src="/assets/pictures/jimmy-mvc/Layers.png" alt="NewProject" /></p>
+
+<p><strong>To:</strong>
+<img src="/assets/pictures/jimmy-mvc/Features.png" alt="NewProject" /></p>
+
+<!-- more -->
+
+
+<h2>What is a feature</h2>
+
+<p>A feature is a small vertical slice of a web site. The <strong>M</strong>odel, <strong>V</strong>iew and <strong>C</strong>ontroller of a <strong>single url</strong>.  It can contain the following:
+- Query
+- QueryValidater
+- QueryHandler
+- Result
+- Command
+- CommandValidater
+- CommandHandler
+- UiController
+- MappingProfile
+- View</p>
+
+<p>A Feature handles the <code>get</code> and or <code>post</code> of an http requests for a single url.<br/>
+Examples: <code>http://localhost/User/Index</code>, <code>http://localhost/User/Create</code>
+It can be synchronous or asynchronous, and can have a redirect to url/Feature upon command success.  Features use the <strong>CQRS light</strong> design pattern.</p>
+
+<h2>CQRS Light</h2>
+
+<p>The CQRS (Command Query Responsibility Segregation) pattern means many different thing to different people.  The full blown CQRS with dual domain models and event sourcing etc. gets a bit overwhelming rather quickly.  &ldquo;<a href="https://lostechies.com/jimmybogard/2015/05/05/cqrs-with-mediatr-and-automapper/">CQRS Light</a>&rdquo; is just the splitting of Features into Queries and Commands.  A single domain model is the starting point and will not be split unless circumstances drive the need, which is unlikely.  There is no event sourcing and most messaging is done in process using MediatR.</p>
+
+<p>The Http protocol correlates rather well with CQRS Light.</p>
+
+<p>Get = Read = Query
+Post = Write = Command</p>
+
+<p>The MediatR Nuget package will be used to implement CQRS light.</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/MediatR.png" alt="MediatR" /></p>
+
+<p>This should all become clear as we implement. Let&rsquo;s get started.</p>
+
+<h1>Tutorial</h1>
+
+<h2>Create Default MVC 5 Application</h2>
+
+<p> Create New Project named JimmyMvc</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/NewProject.png" alt="NewProject" /></p>
+
+<p>Choose <code>MVC</code> and Press <code>Change Authentication</code> and select &ldquo;No Authentication&rdquo;</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/SelectTemplate.png" alt="NewProject" /></p>
+
+<p>Deselect <code>Host in the cloud</code></p>
+
+<p><img src="/assets/pictures/jimmy-mvc/NoAuthentication.png" alt="NewProject" /></p>
+
+<p>Select Ok to create the project.</p>
+
+<p>Run the app to confirm it works as is.</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/ScreenShot.png" alt="NewProject" /></p>
+
+<p>Select <em>Tools->NuGet Package Manager->Package Manager Console</em> and enter:</p>
+
+<p><code>Update-Package</code></p>
+
+<p>Alternatively Select <em>Tools->NuGet Package Manager->Manage NuGet Packages for Solution</em></p>
+
+<p>Upgrade all to the latest stable version.</p>
+
+<p>Run the app to confirm it still works.</p>
+
+<h2>Configure JustCode/ReSharper/CodeRush</h2>
+
+<p>These tools are not required but they sure are handy.  Take some time to configure them and they will help make your code cleaner and more consistent.  This will not be covered here.</p>
+
+<h2>Rename Views to Features</h2>
+
+<p>Rename the <code>Views</code> folder to <code>Features</code></p>
+
+<p><img src="/assets/pictures/jimmy-mvc/FeatureFolder.png" alt="NewProject" /></p>
+
+<p>So now if you run the app you will get an error:</p>
+
+<pre><code>
+The view 'Index' or its master was not found or no view engine supports the searched locations. The following locations were searched:
+~/Views/Home/Index.aspx
+~/Views/Home/Index.ascx
+~/Views/Shared/Index.aspx
+~/Views/Shared/Index.ascx
+~/Views/Home/Index.cshtml
+~/Views/Home/Index.vbhtml
+~/Views/Shared/Index.cshtml
+~/Views/Shared/Index.vbhtml
+</code></pre>
+
+<p>To fix this we change the view engine to one that looks in the proper location:</p>
+
+<p>Create a new root folder named <code>Infrastructure</code>
+<img src="/assets/pictures/jimmy-mvc/InfrastructureFolder.png" alt="NewProject" /></p>
+
+<p>Inside the Infrastructure folder Create new class named: <code>FeatureRazorViewEngine</code></p>
+
+<p>Implement as follows:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Infrastructure
+{
+    using System.Web.Mvc;
+
+    public class FeatureRazorViewEngine : RazorViewEngine
+    {
+        public FeatureRazorViewEngine()
+        {
+            ViewLocationFormats = new[]
+            {
+                "~/Features/{1}/{0}.cshtml",
+                "~/Features/{1}/{0}.vbhtml",
+                "~/Features/Shared/{0}.cshtml",
+                "~/Features/Shared/{0}.vbhtml",
+            };
+
+            MasterLocationFormats = ViewLocationFormats;
+            PartialViewLocationFormats = ViewLocationFormats;
+        }
+    }
+}
+</code></pre>
+
+<p>To use the new ViewEngine, update the <code>Global.asax.cs</code> as follows:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc
+{
+    using Infrastructure;
+    using System.Web.Mvc;
+    using System.Web.Optimization;
+    using System.Web.Routing;
+
+    public class MvcApplication : System.Web.HttpApplication
+    {
+        protected void Application_Start()
+        {
+            AreaRegistration.RegisterAllAreas();
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            // Replace Default ViewEngine with Feature version
+            ViewEngines.Engines.Clear();
+            ViewEngines.Engines.Add(new FeatureRazorViewEngine());
+        }
+    }
+}
+</code></pre>
+
+<p>Running the application now should give you :</p>
+
+<pre><code>The layout page "~/Views/Shared/_Layout.cshtml" could not be found at the following path: "~/Views/Shared/_Layout.cshtml".
+</code></pre>
+
+<p>To fix this, Update the <code>_ViewStart.cshtml</code> to point to the Feature based site Layout location.</p>
+
+<pre><code class="csharp">
+
+
+@{
+    Layout = "~/Features/Shared/_Layout.cshtml";
+}
+</code></pre>
+
+<p>You application will now function using the &ldquo;Feature&rdquo; folder instead of the &ldquo;View&rdquo; folder.</p>
+
+<h2>Removing the Controllers Folder</h2>
+
+<p>Move <code>HomeController.cs</code> to the <code>Features\Home</code> directory and delete the Controllers folder.</p>
+
+<p>Using the feature concept we no longer have to indicate the purpose of the controller by calling it &lt;<em>Home</em>>Controller.  Given it is in the <em>Home</em> namespace the prefix becomes redundant.</p>
+
+<p>Rename <code>HomeController.cs</code> to <code>UiController.cs</code> and the class name to <code>UiController</code></p>
+
+<p>Update the namespace inside the file.</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Features.Home
+</code></pre>
+
+<p>Running the application will now give an error:</p>
+
+<pre><code>The resource cannot be found.
+</code></pre>
+
+<p>The url format is set in the <code>RouteConfig</code> as follows: (<em>Notice this is the default and is not changed.</em>)</p>
+
+<pre><code class="csharp">
+
+
+routes.MapRoute(
+                name: "Default",
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional });
+</code></pre>
+
+<p>MVC controllers are created using the <code>DefaultControllerFactory.CreateController</code> and it uses a naming convention of <code>&lt;controllerName&gt;Controller</code> to get the controller type.  This will no longer work with our new feature based naming convention.</p>
+
+<p>To fix this create your own controller factory class in the <code>Infrastructure</code> Folder as follows:</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure
+{
+    using System;
+    using System.Web.Mvc;
+    using System.Web.Routing;
+
+    public class ControllerFactory : DefaultControllerFactory
+    {
+        protected override Type GetControllerType(RequestContext aRequestContext, string aControllerName)
+        {
+            string action = aRequestContext.RouteData.GetRequiredString(valueName: "action");
+            string typeName = "JimmyMvc.Features." + aControllerName + ".UiController";
+
+            System.Reflection.Assembly assembly = typeof(ControllerFactory).Assembly;
+            Type type = assembly.GetType(typeName);
+            return type;
+        }
+    }
+}
+</code></pre>
+
+<p>To use this controller factory set it directly in the <code>Global.asax.cs</code> file using:</p>
+
+<pre><code class="csharp">
+
+
+ControllerBuilder.Current.SetControllerFactory(new JimmyMvc.Infrastructure.ControllerFactory());
+</code></pre>
+
+<p>Later after we add an IoC container this will need to be removed.</p>
+
+<p>At this point the <code>Global.asax.cs</code> file should be as follows:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc
+{
+    using Infrastructure;
+    using System.Web.Mvc;
+    using System.Web.Optimization;
+    using System.Web.Routing;
+
+    public class MvcApplication : System.Web.HttpApplication
+    {
+        protected void Application_Start()
+        {
+            AreaRegistration.RegisterAllAreas();
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            // Replace Default ViewEngine with Feature version
+            ViewEngines.Engines.Clear();
+            ViewEngines.Engines.Add(new FeatureRazorViewEngine());
+
+            //Replace Default Controller factor with Feature version
+            ControllerBuilder.Current.SetControllerFactory(new JimmyMvc.Infrastructure.ControllerFactory());
+        }
+    }
+}
+</code></pre>
+
+<p>The Application should now run.  But what is the purpose of this application?</p>
+
+<h2>The Business Case</h2>
+
+<p>A Company wants to automate their purchase order (PO) approval process. To reduce clutter and wasted time, they want to establish a hierarchy for approval.  People in the first group must approve before requesting action from the second.  All of the people in the list must approve the PO in order for the funds to be allocated and the PO be issued as approved.</p>
+
+<p>Typically the team that is closest to the project, needs to approve first.  If all of them approve then the next group will be notified and requested to approve or reject.  This second group is often a set of managers involved in a project.  Finally the next group, potentially senior executives are involved. Lastly one person must have the financial signing authority to release the funds.</p>
+
+<p>This blog only covers the implementation of &ldquo;Approval List <strong>Templates</strong>&rdquo; which can be reused when the user actually wants to request approval of a purchase order. The process of requesting approval of the purchase order is another business component and is not covered in this post.</p>
+
+<p>Sample &ldquo;Approval List Template&rdquo; names are &hellip; &ldquo;Minimal Approval&rdquo;, &ldquo;Medium Approval&rdquo;, &ldquo;The Big Dogs&rdquo;</p>
+
+<h3>Class Diagram</h3>
+
+<p><img src="/assets/pictures/jimmy-mvc/Main.png" alt="Model" /></p>
+
+<p>Granted this model is pretty simple in that the behavior is just CRUD. The use of the ApprovalListTemplate will have more domain behavior and possibly could be the topic of a future blog.</p>
+
+<h3>Use Case</h3>
+
+<p>Let&rsquo;s get started with our first use case.</p>
+
+<p>As an administrator we need to be able to maintain a set of users for the application.</p>
+
+<p>TODO Use case Diagram here</p>
+
+<p>Being able to persist users will require a database.  For this case we will use Entity Framework on top of SQL Server.</p>
+
+<h3>Add Entity Framework 6</h3>
+
+<p>Create a root folder named <code>Entities</code> and select it.
+<img src="/assets/pictures/jimmy-mvc/EntitiesFolder.png" alt="Model" /></p>
+
+<p>Press Ctrl-Shift-A To add a new item.</p>
+
+<p>Select Visual C#->Data-> ADO.NET Entity Data Model And Name it &ldquo;Model&rdquo;</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/AddEntity.png" alt="Model" /></p>
+
+<p>Select Empty Code First model and then Finish</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/EmptyCodeFirst.png" alt="Model" /></p>
+
+<p>This will add the Entity Framework Nuget package to your project and Create a <code>Model.cs</code> file and update your <code>Web.config</code></p>
+
+<p>Make sure the Entity Framework Nuget is up to date using Nuget Package Manager.</p>
+
+<h3>DelegateDecompiler.EntityFramework</h3>
+
+<p>Install <a href="https://www.nuget.org/packages/DelegateDecompiler.EntityFramework/0.16.0" title="Nuget">Nuget DelegateDecompiler.EntityFramework</a> See the <a href="https://github.com/hazzik/DelegateDecompiler" title="Delegate Decompile">github</a> page.
+<img src="/assets/pictures/jimmy-mvc/DelegateDecompilerNuget.png" alt="Model" /></p>
+
+<p>This will give you the <code>Computed</code> attribute and improved linq operations with it.</p>
+
+<h2>User</h2>
+
+<p>Now add a new class in the Entities folder named User.</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Entities
+{
+    using System.ComponentModel.DataAnnotations;
+    using DelegateDecompiler;
+
+    public class User
+    {
+        public int UserId { get; set; }
+
+        public string LastName { get; set; }
+
+        [Display(Name = "First Name")]
+        public string FirstAndMiddleName { get; set; }
+
+        [Computed]
+        public string FullName
+        {
+            get
+            {
+                return LastName + ", " + FirstAndMiddleName;
+            }
+        }
+
+    }
+}
+</code></pre>
+
+<p>Compile. To Ensure the application builds.</p>
+
+<p>Update <code>Model.cs</code> to add the DbSet for the User class and to not pluralize the table names:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Entities
+{
+    using System;
+    using System.Data.Entity;
+    using System.Data.Entity.ModelConfiguration.Conventions;
+    using System.Linq;
+
+    public class Model : DbContext
+    {
+        // Your context has been configured to use a 'Model' connection string from your application's 
+        // configuration file (App.config or Web.config). By default, this connection string targets the 
+        // 'JimmyMvc.Model' database on your LocalDb instance. 
+        // 
+        // If you wish to target a different database and/or database provider, modify the 'Model' 
+        // connection string in the application configuration file.
+        public Model()
+                : base(nameOrConnectionString: "name=Model")
+        {
+        }
+
+        // Add a DbSet for each entity type that you want to include in your model. For more information 
+        // on configuring and using a Code First model, see http://go.microsoft.com/fwlink/?LinkId=390109.
+
+        // public virtual DbSet&lt;MyEntity&gt; MyEntities { get; set; }
+        public virtual DbSet&lt;User&gt; Users { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder aDbModelBuilder)
+        {
+            aDbModelBuilder.Conventions.Remove&lt;PluralizingTableNameConvention&gt;();
+        }
+    }
+}
+</code></pre>
+
+<h2>Create Database Initializer</h2>
+
+<p>Add a new class named <code>ModelInitializer</code> to the <code>Entities</code> Folder as follows:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Entities
+{
+    using System.Collections.Generic;
+
+    public class ModelInitializer : System.Data.Entity.DropCreateDatabaseIfModelChanges&lt;Model&gt;
+    {
+        protected override void Seed(Model aModel)
+        {
+            base.Seed(aModel);
+
+            var users = new List&lt;User&gt;
+            {
+                new User{FirstAndMiddleName="Carson"  ,LastName="Alexander" },
+                new User{FirstAndMiddleName="Meredith",LastName="Alonso"    },
+                new User{FirstAndMiddleName="Arturo"  ,LastName="Anand"     },
+                new User{FirstAndMiddleName="Gytis"   ,LastName="Barzdukas" },
+                new User{FirstAndMiddleName="Yan"     ,LastName="Li"        },
+                new User{FirstAndMiddleName="Peggy"   ,LastName="Justice"   },
+                new User{FirstAndMiddleName="Laura"   ,LastName="Norman"    },
+                new User{FirstAndMiddleName="Nino"    ,LastName="Olivetto"  }
+            };
+
+            users.ForEach(aUser =&gt; aModel.Users.Add(aUser));
+            aModel.SaveChanges();
+        }
+    }
+}
+</code></pre>
+
+<p>Tell Entity Framework to use your initializer class by adding the following to the <code>Global.asax.cs</code> file as shown and the proper using statments:</p>
+
+<pre><code class="csharp">
+
+    // Set Database Initializer
+    Database.SetInitializer&lt;Model&gt;(new ModelInitializer());
+</code></pre>
+
+<p>The intializer will execute on first use.  If you want the initializer to execute immediately add the following code in the <code>Global.asax.cs</code> following the above.</p>
+
+<pre><code class="csharp">
+
+
+    using (var model = new Model())
+    {
+        model.Database.Initialize(false);
+    }
+</code></pre>
+
+<p><code>Global.asax.cs</code> should now be as follows:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc
+{
+    using Infrastructure;
+    using Entities;
+    using System.Web.Mvc;
+    using System.Web.Optimization;
+    using System.Web.Routing;
+    using System.Data.Entity;
+
+    public class MvcApplication : System.Web.HttpApplication
+    {
+        protected void Application_Start()
+        {
+            AreaRegistration.RegisterAllAreas();
+            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            // Replace Default ViewEngine with Feature version
+            ViewEngines.Engines.Clear();
+            ViewEngines.Engines.Add(new FeatureRazorViewEngine());
+
+            //Replace Default Controller factor with Feature version
+            ControllerBuilder.Current.SetControllerFactory(new JimmyMvc.Infrastructure.ControllerFactory());
+
+            // Set Database Initializer
+            Database.SetInitializer&lt;Model&gt;(new ModelInitializer());
+
+            using (var model = new Model())
+            {
+                model.Database.Initialize(force: false);
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>Execute the application now.  And the database should be created and populated with data.</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/DatabaseCreated.png" alt="Database Created" /></p>
+
+<p><img src="/assets/pictures/jimmy-mvc/UserData.png" alt="Database Created" /></p>
+
+<p>Lets get started implementing our first Feature and building the infrastructure needed to support it.</p>
+
+<h2>Feature 1: Display the list of users ##</h2>
+
+<p>The url for the Feature will be <code>/User/Index</code></p>
+
+<p>We will store all of the Features in the Features folder organized by the Entity/Aggregate root of which they are associated. So add a <code>User</code> folder under the Features folder.</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/UserFolder.png" alt="Database Created" /></p>
+
+<p>Add a class named <code>Index</code> to the <code>User</code> folder.  This will contain the Features logic.</p>
+
+<p>Add an <code>Index</code> view by right clicking on the <code>User</code> folder and selecting <code>Add-&gt;MVC 5 View Page (Razor)</code></p>
+
+<p>Nest the <code>Index.cshtml</code> file under the <code>Index.cs</code> file to keep the solution organized, using the <a href="https://visualstudiogallery.msdn.microsoft.com/3ebde8fb-26d8-4374-a0eb-1e4e2665070c">File Nesting</a> add-in.</p>
+
+<p>Replace the default <code>index.cshtml</code> code with the following temporary code which is just used so we can see something when the view renders. We will update this later.</p>
+
+<p>```csharp</p>
+
+<div>
+    List of Users
+</div>
+
+
+<pre><code>
+Add a link to the main menu in the `Features\Shared\_Layout.cshtml` to the Users page.
+</code></pre>
+
+<p>&hellip;
+<li>@Html.ActionLink(&ldquo;Users&rdquo;, &ldquo;Index&rdquo;, &ldquo;User&rdquo;)</li>
+&hellip;
+```</p>
+
+<p>Now add a controller to the Feature.</p>
+
+<p>Nested inside the Index class add a controller.</p>
+
+<p>Given that each feature now represents a single url the name of the controller method no longer needs to correspond to the url as there can only be one method for <code>get</code> and one for <code>post</code> on each controller.  So we will name all of our methods &ldquo;Action&rdquo; and thus give us the opportunity to be more DRY.  A controller class now can represent a single url.  We will use this knowledge later when we create a <code>LinkBuilder</code> class.</p>
+
+<p>Your <code>User\Index.cs</code> file should be as follows:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Features.User
+{
+    using System.Web.Mvc;
+
+    public class Index
+    {
+        public class UiController : Controller
+        {
+            public virtual ActionResult Action()
+            {
+                return View();
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>Execute the app and attempt to navigate to the Users page. <img src="/assets/pictures/jimmy-mvc/UsersLink.png" alt="Users page" /></p>
+
+<p>You will get <code>The resource cannot be found.</code> error. This is because the controller can not be found using our Controller Factory.  The current factory is looking for a controller of type &ldquo;JimmyMvc.Features.User.UiController&rdquo; and an method named &ldquo;Index&rdquo;.</p>
+
+<p>Our controllers fully qualified name is &ldquo;JimmyMvc.Features.User.Index+UiController&rdquo; because we have embedded it inside the feature.  So we either have to change the factory, or not embed the controller.  Having done this both ways I chose to embed the controller as this allows for a more <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a> solution.  Also the method we are looking for is always named <code>Action</code> we will address this also in the controller factory.</p>
+
+<p>So let&rsquo;s update the factory.</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Infrastructure
+{
+    using System;
+    using System.Web.Mvc;
+    using System.Web.Mvc.Async;
+    using System.Web.Routing;
+
+    public class ControllerFactory : DefaultControllerFactory
+    {
+        protected override Type GetControllerType(RequestContext aRequestContext, string aControllerName)
+        {
+            string action = aRequestContext.RouteData.GetRequiredString(valueName: "action");
+            string typeName = "JimmyMvc.Features." + aControllerName + "." + action + "+UiController";
+
+            System.Reflection.Assembly assembly = typeof(ControllerFactory).Assembly;
+            Type type = assembly.GetType(typeName);
+            return type;
+        }
+
+        public override IController CreateController(RequestContext aRequestContext, string aControllerName)
+        {
+            IController controller = base.CreateController(aRequestContext, aControllerName);
+            return ReplaceActionInvoker(controller);
+        }
+
+        private IController ReplaceActionInvoker(IController aController)
+        {
+            var mvcController = aController as Controller;
+            if (mvcController != null)
+            {
+                mvcController.ActionInvoker = new FeatureActionInvoker();
+            }
+
+            return aController;
+        }
+
+        public class FeatureActionInvoker : AsyncControllerActionInvoker
+        {
+            protected override ActionDescriptor FindAction(ControllerContext aControllerContext, ControllerDescriptor aControllerDescriptor, string aActionName)
+            {
+                return base.FindAction(aControllerContext, aControllerDescriptor, actionName: "Action");
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>Executing the application and navigating to the home url (Home/Index) will now give &ldquo;The resource cannot be found.&rdquo; but when you manually enter /User/Index you should see the view page.</p>
+
+<p>So let&rsquo;s fix the <code>Home/About</code>, <code>Home/Contact</code>, <code>Home/Index</code> Features</p>
+
+<p>under <code>Features\Home</code> Create classes named <code>About</code>, <code>Contact</code> and <code>Index</code>.</p>
+
+<p>Take the existing controller and split it up among the respective classes.</p>
+
+<p>The Existing Controller:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Features.Home
+{
+    using System;
+    using System.Linq;
+    using System.Web.Mvc;
+
+    public class UiController : Controller
+    {
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
+
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+    }
+}
+</code></pre>
+
+<p>Split and change the method names to &ldquo;Action&rdquo;</p>
+
+<p>Index.cs:</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Features.Home
+{
+    using System.Web.Mvc;
+
+    public class Index
+    {
+        public class UiController : Controller
+        {
+            public ActionResult Action()
+            {
+                return View();
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>About.cs</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Features.Home
+{
+    using System.Web.Mvc;
+
+    public class About
+    {
+
+        public class UiController : Controller
+        {
+            public ActionResult Action()
+            {
+                ViewBag.Message = "Your application description page.";
+
+                return View();
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>Contact.cs</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Features.Home
+{
+    using System.Web.Mvc;
+
+    public class Contact
+    {
+        public class UiController : Controller
+        {
+            public ActionResult Action()
+            {
+                ViewBag.Message = "Your contact page.";
+
+                return View();
+            }
+        }
+    }
+}
+</code></pre>
+
+<p>now delete the <code>Home\UiController.cs</code> file and nest all the cshtml files under there respective .cs files.</p>
+
+<p>At this point, the site should function and all the pages should work as well.  This gives one a basic idea of the concept but much more is needed for your typical business application.</p>
+
+<p>The <code>User/Index</code> Feature needs to display the list of users vs the current temporary page.</p>
+
+<h2>Add Nuget packages</h2>
+
+<p>First we need to add the nuget packages we are going to use in our features.</p>
+
+<h3>MoreLinq</h3>
+
+<p>Add <a href="https://www.nuget.org/packages/morelinq/1.1.1/" title="Nuget">MoreLinq</a></p>
+
+<h3>Mehdime.Entity ###F</h3>
+
+<p>Add <a href="https://www.nuget.org/packages/Mehdime.Entity/" title="Nuget">Nuget Mehdime.Entity</a> See the <a href="https://github.com/mehdime/DbContextScope" title="DbContextScope">github</a> page.
+This gives us a better way of handling the lifecycle of DbContexts</p>
+
+<h3>DbContextFactory</h3>
+
+<p>In the <code>Entities</code> folder create the <code>DbContextFactory</code> class as follows:</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Entities
+{
+    using System.Data.Entity;
+    using Mehdime.Entity;
+    public class DbContextFactory : IDbContextFactory
+    {
+        public TDbContext CreateDbContext&lt;TDbContext&gt;() where TDbContext : DbContext
+        {
+            return new Model() as TDbContext;
+        }
+    }
+}
+</code></pre>
+
+<h4>FluentValidation.MVC5</h4>
+
+<p><a href="http://github.com/JeremySkinner/FluentValidation">FluentValidation.MVC5</a>
+<img src="/assets/pictures/jimmy-mvc/FluentValidation.MVC5Nuget.png" alt="FluentValidation.MVC5 Nuget" /></p>
+
+<h4>lodash</h4>
+
+<p><a href="https://lodash.com/">lodash</a>
+<img src="/assets/pictures/jimmy-mvc/lodashNuget.png" alt="lodash Nuget" /></p>
+
+<p>this will add the loadash.js file to the <code>Scripts</code> directory.</p>
+
+<h4>Modernizr</h4>
+
+<p><a href="http://modernizr.com/">Modernizr</a>
+<img src="/assets/pictures/jimmy-mvc/ModernizrNuget.png" alt="Modernizr Nuget" /></p>
+
+<h4>Microsoft ASP.NET MVC Futures</h4>
+
+<p><a href="https://www.nuget.org/packages/Microsoft.AspNet.Mvc.Futures/">Microsoft ASP.NET MVC Futures 5.1.0-rc1</a>
+<img src="/assets/pictures/jimmy-mvc/MicrosoftAspNetMvcFuturesNuget.png" alt="FluentValidation.MVC5 Nuget" /></p>
+
+<p>Check for updates on all nuget packages.  Do not include pre-release versions unless stated.  Build Run and confirm the site works.</p>
+
+<h3>StructureMap.MVC5</h3>
+
+<p>StructureMap is used as the Ioc container in this template.  It could be replaced with Unity or Ninject (samples to come later&hellip; maybe)</p>
+
+<p><a href="https://www.nuget.org/packages/StructureMap.MVC5/3.1.1.134">StructureMap.MVC5</a>
+<img src="/assets/pictures/jimmy-mvc/StructureMap.MVC5Nuget.png" alt="StructureMap.MVC5" /></p>
+
+<p>This adds 4 dependent packages and also adds the files displayed below.</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/StructureMap.MVC5Files.png" alt="StructureMap.MVC5" /></p>
+
+<p>Now run <code>Update-Package</code> to update to the latest version of the dependent packages.</p>
+
+<p>Build and run now will give the following error:</p>
+
+<p><code>An instance of IControllerFactory was found in the resolver as well as a custom registered provider in ControllerBuilder.GetControllerFactory. Please set only one or the other.</code></p>
+
+<p>Now that we have a container we no longer need the explicit setting of the controller factory in <code>Global.asax.cs</code> file</p>
+
+<p>So remove the line</p>
+
+<pre><code class="csharp">
+
+ControllerBuilder.Current.SetControllerFactory(new JimmyMvc.Infrastructure.ControllerFactory());
+</code></pre>
+
+<p>The app should now function again.</p>
+
+<p>Note that a nuget called <a href="https://github.com/davidebbo/WebActivator">WebActivatorEx</a> was a dependency and was also installed. &ldquo;WebActivator is a NuGet package that allows other packages to easily bring in Startup and Shutdown code into a web application. This gives a much cleaner solution than having to modify global.asax with the startup logic from many packages&rdquo;</p>
+
+<p>Thus the StructuremapMVC.cs file has a Start method that will execute when the site starts up.</p>
+
+<h3>DeafultRegistry</h3>
+
+<p>Update the constructor as follows:</p>
+
+<pre><code class="csharp">
+
+
+// --------------------------------------------------------------------------------------------------------------------
+// &lt;copyright file="DefaultRegistry.cs" company="Web Advanced"&gt;
+// Copyright 2012 Web Advanced (www.webadvanced.com)
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// &lt;/copyright&gt;
+// --------------------------------------------------------------------------------------------------------------------
+
+namespace JimmyMvc.DependencyResolution
+{
+    using Entities;
+    using FluentValidation;
+    using Infrastructure;
+    using StructureMap.Configuration.DSL;
+    using StructureMap.Graph;
+    using StructureMap.Pipeline;
+    using System.Web.Mvc;
+    //using JimmyMvc.Infrastructure.Validation;
+    using Mehdime.Entity;
+
+    public class DefaultRegistry : Registry
+    {
+        #region Constructors and Destructors
+
+        public DefaultRegistry()
+        {
+            Scan(
+                            aAssemblyScanner =&gt;
+                            {
+                                aAssemblyScanner.TheCallingAssembly();
+                                aAssemblyScanner.WithDefaultConventions();
+                                aAssemblyScanner.LookForRegistries();
+                                aAssemblyScanner.AssemblyContainingType&lt;DefaultRegistry&gt;();
+                                aAssemblyScanner.AddAllTypesOf(typeof(IModelBinder));
+                                aAssemblyScanner.AddAllTypesOf(typeof(IModelBinderProvider));
+                                aAssemblyScanner.With(new ControllerConvention());
+                            });
+            For&lt;IControllerFactory&gt;().Use&lt;ControllerFactory&gt;();
+            For&lt;ModelValidatorProvider&gt;().Use&lt;FluentValidationModelValidatorProvider&gt;();
+            For&lt;IDbContextFactory&gt;().Use&lt;DbContextFactory&gt;().LifecycleIs&lt;ContainerLifecycle&gt;();
+            For&lt;IDbContextScopeFactory&gt;().Use&lt;DbContextScopeFactory&gt;().LifecycleIs&lt;ContainerLifecycle&gt;();
+            For&lt;IAmbientDbContextLocator&gt;().Use&lt;AmbientDbContextLocator&gt;().LifecycleIs&lt;ContainerLifecycle&gt;();
+            //For&lt;IValidatorFactory&gt;().Use&lt;StructureMapValidatorFactory&gt;();
+        }
+
+        #endregion
+    }
+}
+</code></pre>
+
+<p>This will automatically look for Registries that we will create as we proceed.   We will use the Validation logic later.</p>
+
+<h3>PagedList.MVC</h3>
+
+<p><a href="https://www.nuget.org/packages/PagedList.Mvc/4.5.0">PagedList.MVC</a>
+<img src="/assets/pictures/jimmy-mvc/PagedListMvcNuget.png" alt="PagedListMvcNuget" /></p>
+
+<p>This will also add a PagedList.css file to your project.</p>
+
+<h3>Automapper.EF6</h3>
+
+<p><a href="https://www.nuget.org/packages/AutoMapper.EF6/">Automapper.EF6</a>
+<img src="/assets/pictures/jimmy-mvc/AutoMapper.EF6Nuget.png" alt="AutoMapper.EF6Nuget" /></p>
+
+<p>Again run <code>Update-Package</code></p>
+
+<h4>Mapping Extensions</h4>
+
+<p>The <a href="https://lostechies.com/jimmybogard/2015/05/05/cqrs-with-mediatr-and-automapper/">ProjectToPagedList</a> method used in this post is an extension method we will create now.</p>
+
+<p>Create the <code>Mapping</code> folder under the Infrastructure folder</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/MappingFolder.png" alt="MediatRNuget" /></p>
+
+<p>Create <code>MapperExtensions.cs</code> in the <code>Mapping</code> folder as follows:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Infrastructure.Mapping
+{
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using AutoMapper.QueryableExtensions;
+    using DelegateDecompiler;
+    using DelegateDecompiler.EntityFramework;
+    using PagedList;
+
+    public static class MapperExtensions
+    {
+        public static async Task&lt;List&lt;TDestination&gt;&gt; ProjectToListAsync&lt;TDestination&gt;(this IQueryable aQueryable)
+        {
+            return await aQueryable.ProjectTo&lt;TDestination&gt;().DecompileAsync().ToListAsync();
+        }
+
+        public static IQueryable&lt;TDestination&gt; ProjectToQueryable&lt;TDestination&gt;(this IQueryable aQueryable)
+        {
+            return aQueryable.ProjectTo&lt;TDestination&gt;().Decompile();
+        }
+
+        public static IPagedList&lt;TDestination&gt; ProjectToPagedList&lt;TDestination&gt;(this IQueryable aQueryable, int aPageNumber, int aPageSize)
+        {
+            return aQueryable.ProjectTo&lt;TDestination&gt;().Decompile().ToPagedList(aPageNumber, aPageSize);
+        }
+
+        public static async Task&lt;TDestination&gt; ProjectToSingleOrDefaultAsync&lt;TDestination&gt;(this IQueryable aQueryable)
+        {
+            return await aQueryable.ProjectTo&lt;TDestination&gt;().DecompileAsync().SingleOrDefaultAsync();
+        }
+    }
+}
+</code></pre>
+
+<h4>AutoMapperRegistry</h4>
+
+<p>We need to register the mappings with the Ioc Container.</p>
+
+<p>Create the <code>AutoMapperRegistry</code> class in the Mapping folder as follows:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Infrastructure.Mapping
+{
+    using AutoMapper;
+    using StructureMap.Configuration.DSL;
+
+    public class AutoMapperRegistry : Registry
+    {
+        public AutoMapperRegistry()
+        {
+            Scan(aAssemblyScanner =&gt;
+            {
+                aAssemblyScanner.AssemblyContainingType&lt;AutoMapperRegistry&gt;();
+                aAssemblyScanner.AddAllTypesOf&lt;Profile&gt;();
+                aAssemblyScanner.WithDefaultConventions();
+            });
+        }
+    }
+}
+</code></pre>
+
+<h3>AutoMapperBootstrap</h3>
+
+<p>Under the Mapping folder create AutoMapperBootstrapper class as follows:</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.Mapping
+{
+    using System.Collections.Generic;
+    using AutoMapper;
+    using StructureMap;
+
+    public class AutoMapperBootstrapper
+    {
+        private static bool initialized;
+        private static readonly object containerLock = new object();
+
+        public static void Initialize(IContainer aContainer)
+        {
+            lock (containerLock)
+            {
+                if (!initialized)
+                {
+                    InitializeInternal(aContainer);
+                    initialized = true;
+                }
+            }
+        }
+
+        private static void InitializeInternal(IContainer aContainer)
+        {
+            //var logger = Logger.Instance;
+
+            //logger.Debug("Initializing Automapper");
+
+            Mapper.Initialize(aConfiguration =&gt;
+            {
+                var profileNames = new List&lt;string&gt;();
+                foreach (var profile in aContainer.GetAllInstances&lt;Profile&gt;())
+                {
+                    profileNames.Add(profile.ProfileName);
+                    aConfiguration.AddProfile(profile);
+                }
+
+                //logger.Verbose("Added profiles: {ProfileName}", profileNames);
+
+                aConfiguration.ConstructServicesUsing(aContainer.GetInstance);
+            });
+        }
+    }
+}
+</code></pre>
+
+<h3>StructuremapMvc</h3>
+
+<p>Make sure AutomapperBootstrapper is intialized by updating the <code>App_Start/StructureMapMvc.cs</code> Start method to:</p>
+
+<pre><code>        public static void Start()
+        {
+            IContainer container = IoC.Initialize();
+            StructureMapDependencyScope = new StructureMapDependencyScope(container);
+            DependencyResolver.SetResolver(StructureMapDependencyScope);
+            DynamicModuleUtility.RegisterModule(typeof(StructureMapScopeModule));
+            AutoMapperBootstrapper.Initialize(StructureMapDependencyScope.Container);
+        }
+</code></pre>
+
+<p>add</p>
+
+<p><code>using Infrastructure.Mapping;</code></p>
+
+<h3>MediatR</h3>
+
+<p><a href="https://www.nuget.org/packages/MediatR">MediatR</a> This blog we use the 2.0.2 version
+<img src="/assets/pictures/jimmy-mvc/MediatRNuget.png" alt="MediatRNuget" /></p>
+
+<h3>HtmlTags Nuget</h3>
+
+<p><a href="https://www.nuget.org/packages/HtmlTags/">HtmlTags</a>
+<img src="/assets/pictures/jimmy-mvc/HtmlTagsNuget.png" alt="HtmlTags" /></p>
+
+<p>If you would like to learn and understand the benefits of HtmlTags read this excellent <a href="http://lostechies.com/jimmybogard/2013/07/18/conventional-html-in-asp-net-mvc-a-primer/">series of articles on LosTechies.com</a></p>
+
+<p>Configure HtmlTags</p>
+
+<p>Add the Tags folder under Infrastructure.</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/TagsFolder.png" alt="HtmlTags" /></p>
+
+<h4>HtmlTagExtensions</h4>
+
+<p>In the <code>Tags</code> Folder create the <code>HtmlTagExtensions</code> class as follows:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Infrastructure.Tags
+{
+    using HtmlTags;
+
+    public static class HtmlTagExtensions
+    {
+        public static HtmlTag AddPlaceholder(this HtmlTag aHtmlTag, string aPlaceholder)
+        {
+            return aHtmlTag.Attr(attribute: "placeholder", value: aPlaceholder);
+        }
+
+        public static HtmlTag AddPattern(this HtmlTag aHtmlTag, string aPattern)
+        {
+            HtmlTag retVal = aHtmlTag.Data(key: "pattern", value: aPattern);
+            return retVal;
+        }
+
+        public static HtmlTag AutoCapitalize(this HtmlTag aHtmlTag)
+        {
+            return aHtmlTag.Data(key: "autocapitalize", value: "true");
+        }
+    }
+}
+</code></pre>
+
+<h3>EnumDropDownModifier</h3>
+
+<p>This lets us easily create drop down lists from enums</p>
+
+<p>In the <code>Tags</code> Folder create the <code>EnumDropDownModifier</code> class as follows:</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.Tags
+{
+    using System;
+    using HtmlTags;
+    using HtmlTags.Conventions;
+    using HtmlTags.Conventions.Elements;
+
+    public class EnumDropDownModifier : IElementModifier
+    {
+        public bool Matches(ElementRequest aElementRequest)
+        {
+            return aElementRequest.Accessor.PropertyType.IsEnum;
+        }
+
+        public void Modify(ElementRequest aElementRequest)
+        {
+            Type enumType = aElementRequest.Accessor.PropertyType;
+
+            aElementRequest.CurrentTag.RemoveAttr(attribute: "type");
+            aElementRequest.CurrentTag.TagName(tag: "select");
+            aElementRequest.CurrentTag.Append(new HtmlTag(tag: "option"));
+            foreach (var value in Enum.GetValues(enumType))
+            {
+                HtmlTag optionTag =
+                    new HtmlTag(tag: "option")
+                    .Value(value.ToString())
+                    .Text(Enum.GetName(enumType, value));
+                aElementRequest.CurrentTag.Append(optionTag);
+            }
+        }
+    }
+}
+</code></pre>
+
+<h3>DefaultDisplayLabelBuilder</h3>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.Tags
+{
+    using System.Linq;
+    using System.Text.RegularExpressions;
+    using HtmlTags;
+    using HtmlTags.Conventions;
+    using HtmlTags.Conventions.Elements;
+
+    public class DefaultDisplayLabelBuilder : IElementBuilder
+    {
+        public bool Matches(ElementRequest aElementRequest)
+        {
+            return true;
+        }
+
+        public HtmlTag Build(ElementRequest aElementRequest)
+        {
+            return new HtmlTag(tag: "").NoTag().Text(BreakUpCamelCase(aElementRequest.Accessor.Name));
+        }
+
+        public static string BreakUpCamelCase(string aFieldName)
+        {
+            string[] patterns = new[]
+            {
+                                "([a-z])([A-Z])",
+                                "([0-9])([a-zA-Z])",
+                                "([a-zA-Z])([0-9])"
+                        };
+            string output = patterns.Aggregate(aFieldName,
+                    (aCurrent, aPattern) =&gt; Regex.Replace(aCurrent, aPattern, replacement: "$1 $2", options: RegexOptions.IgnorePatternWhitespace));
+            return output.Replace(oldChar: '_', newChar: ' ');
+        }
+    }
+}
+</code></pre>
+
+<h3>DefaultAspNetMvcHtmlConventions</h3>
+
+<p>This will set up our Default html conventions.</p>
+
+<p>In the <code>Tags</code> Folder create the <code>DefaultAspNetMvcHtmlConventions</code> class</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.Tags
+{
+    using System;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+    using System.Web.Mvc;
+    using HtmlTags;
+    using HtmlTags.Conventions;
+    using HtmlTags.Conventions.Elements;
+    using HtmlTags.Reflection;
+
+    public class DefaultAspNetMvcHtmlConventions : HtmlConventionRegistry
+    {
+        public DefaultAspNetMvcHtmlConventions()
+        {
+            Editors.Always.AddClass(className: "form-control");
+
+            //Label
+            Labels.Always.AddClass(className: "control-label");
+            Labels.Always.AddClass(className: "col-md-2");
+            Labels.ModifyForAttribute&lt;DisplayAttribute&gt;((aHtmlTag, a) =&gt; aHtmlTag.Text(a.Name));
+
+            //Checkbox
+            Editors.IfPropertyIs&lt;bool&gt;().Attr(attName: "type", value: "checkbox");
+
+            //Color
+            Editors.IfPropertyIs&lt;Color&gt;().Attr(attName: "type", value: "color");
+
+            //Date/Time/DateTime/Local DateTime
+            Editors.IfPropertyIs&lt;DateTime?&gt;().ModifyWith(aElementRequest =&gt; aElementRequest.CurrentTag
+                    .AddPattern(aPattern: "9{1,2}/9{1,2}/9999")
+                    .AddPlaceholder(aPlaceholder: "MM/DD/YYYY")
+                    .AddClass(className: "datepicker")
+                .Value(aElementRequest.Value&lt;DateTime?&gt;() != null ? aElementRequest.Value&lt;DateTime&gt;().ToShortDateString() : string.Empty));
+            Displays.IfPropertyIs&lt;DateTime&gt;().ModifyWith(aElementRequest =&gt; aElementRequest.CurrentTag.Text(aElementRequest.Value&lt;DateTime&gt;().ToShortDateString()));
+            Displays.IfPropertyIs&lt;DateTime?&gt;().ModifyWith(aElementRequest =&gt; aElementRequest.CurrentTag.Text(aElementRequest.Value&lt;DateTime?&gt;() == null ? null : aElementRequest.Value&lt;DateTime?&gt;().Value.ToShortDateString()));
+
+
+            //Email
+            Editors.If(aElementRequest =&gt; aElementRequest.Accessor.Name.Contains(value: "Email"))
+                    .Attr(attName: "type", value: "email");
+
+            //Hidden
+            Editors.IfPropertyIs&lt;Guid&gt;().Attr(attName: "type", value: "hidden");
+            Editors.IfPropertyIs&lt;Guid?&gt;().Attr(attName: "type", value: "hidden");
+            Editors.IfPropertyHasAttribute&lt;HiddenInputAttribute&gt;().Attr(attName: "type", value: "hidden");
+
+            //Number
+            Editors.IfPropertyIs&lt;decimal?&gt;().ModifyWith(aElementRequest =&gt; aElementRequest.CurrentTag
+                    .Data(key: "pattern", value: "9{1,9}.99")
+                    .Data(key: "placeholder", value: "0.00"));
+            //TODO int float
+            Displays.IfPropertyIs&lt;decimal&gt;().ModifyWith(aElementRequest =&gt; aElementRequest.CurrentTag.Text(aElementRequest.Value&lt;decimal&gt;().ToString(format: "C")));
+
+            //Password
+            Editors.If(aElementRequest =&gt; aElementRequest.Accessor.Name.Contains(value: "Password"))
+                    .Attr(attName: "type", value: "password");
+            Editors.If(aElementRequest =&gt;
+            {
+                DataTypeAttribute dataTypeAttribute = aElementRequest.Accessor.GetAttribute&lt;DataTypeAttribute&gt;();
+                return dataTypeAttribute != null &amp;&amp; dataTypeAttribute.DataType == DataType.Password;
+            }).Attr(attName: "type", value: "password");
+
+            //Radio
+            Editors.Modifier&lt;EnumDropDownModifier&gt;();
+
+            //Telephone
+            Editors.If(aElementRequest =&gt; aElementRequest.Accessor.Name.Contains(value: "Phone"))
+                    .Attr(attName: "type", value: "tel");
+            Editors.If(aElementRequest =&gt;
+            {
+                DataTypeAttribute dataTypeAttribute = aElementRequest.Accessor.GetAttribute&lt;DataTypeAttribute&gt;();
+                return dataTypeAttribute != null &amp;&amp; dataTypeAttribute.DataType == DataType.PhoneNumber;
+            }).Attr(attName: "type", value: "tel");
+
+            //Text
+            // Default
+
+            //Url
+            Editors.If(aElementRequest =&gt; aElementRequest.Accessor.Name.Contains(value: "Url"))
+                    .Attr(attName: "type", value: "url");
+            Editors.If(aElementRequest =&gt;
+            {
+                DataTypeAttribute dataTypeAttribute = aElementRequest.Accessor.GetAttribute&lt;DataTypeAttribute&gt;();
+                return dataTypeAttribute != null &amp;&amp; dataTypeAttribute.DataType == DataType.Url;
+            }).Attr(attName: "type", value: "url");
+
+            //Id
+            Editors.If(aElementRequest =&gt; aElementRequest.Accessor.Name.EndsWith(value: "id", comparisonType: StringComparison.OrdinalIgnoreCase)).BuildBy(a =&gt; new HiddenTag().Value(a.StringValue()));
+
+            //byte
+            Editors.IfPropertyIs&lt;byte[]&gt;().BuildBy(a =&gt; new HiddenTag().Value(Convert.ToBase64String(a.Value&lt;byte[]&gt;())));
+
+            //Domain Specific
+
+            //Editors.BuilderPolicy&lt;UserSelectElementBuilder&gt;();
+            //Editors.BuilderPolicy&lt;XXXSelectElementBuilder&gt;();
+            DisplayLabels.Always.BuildBy&lt;DefaultDisplayLabelBuilder&gt;();
+
+            DisplayLabels.ModifyForAttribute&lt;DisplayAttribute&gt;((aHtmlTag, a) =&gt; aHtmlTag.Text(a.Name));
+
+        }
+
+        public ElementCategoryExpression DisplayLabels
+        {
+            get { return new ElementCategoryExpression(Library.TagLibrary.Category(category: "DisplayLabels").Profile(TagConstants.Default)); }
+        }
+    }
+}
+</code></pre>
+
+<h4>HtmlTagRegistry</h4>
+
+<p>Register these conventions with IoC container</p>
+
+<p>In the <code>Tags</code> folder create the <code>HtmlTagRegistry</code> class.</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.Tags
+{
+    using HtmlTags.Conventions;
+    using StructureMap.Configuration.DSL;
+
+    public class HtmlTagRegistry : Registry
+    {
+
+        public HtmlTagRegistry()
+        {
+
+            var htmlConventionLibrary = new HtmlConventionLibrary();
+            new DefaultAspNetMvcHtmlConventions().Apply(htmlConventionLibrary);
+            new DefaultHtmlConventions().Apply(htmlConventionLibrary);
+            For&lt;HtmlConventionLibrary&gt;().Use(htmlConventionLibrary);
+        }
+    }
+}
+</code></pre>
+
+<p>Build and confirm app still runs properly.</p>
+
+<h2>User/Index Feature</h2>
+
+<p>The <code>User/Index</code> page will only implement the get/query portion of a feature.  The flow of this is Query->Handler->Result.</p>
+
+<p>The <code>Result</code> is the Model portion of MVC.  The controller directs the incoming query to the Handler and sends the Result/Model to the View.</p>
+
+<p>We will need to add <code>Query</code>, <code>Result</code> and <code>QueryHandler</code> classes to the <code>Index</code> Feature.</p>
+
+<h4>User.Index.Query</h4>
+
+<p>Create a nested <code>Query</code> class inside the <code>Index</code> class.</p>
+
+<pre><code class="csharp">
+
+
+        public class Query : IRequest&lt;Result&gt;
+        {
+            public string SortOrder { get; set; }
+            public string CurrentFilter { get; set; }
+            public string SearchString { get; set; }
+            public int? Page { get; set; }
+        }
+</code></pre>
+
+<p>The query will facilitate sorting, paging and filtering of the User list.</p>
+
+<h4>User.Index.Result</h4>
+
+<p>Create a nested <code>Result</code> class inside the <code>Index</code> class.  This will be the model passed to the view.</p>
+
+<pre><code class="csharp">
+
+
+        public class Result : IRequest
+        {
+            public string CurrentSort { get; set; }
+            public string NameSortParm { get; set; }
+            public string CurrentFilter { get; set; }
+            public string SearchString { get; set; }
+            public IPagedList&lt;User&gt; Users { get; set; }
+
+            public class User
+            {
+                public int UserId { get; set; }
+                [Display(Name = "First Name")]
+                public string FirstAndMiddleName { get; set; }
+                public string LastName { get; set; }
+            }
+        }
+</code></pre>
+
+<h4>User.Index.UiController</h4>
+
+<p>Update UiController.Action to now take the Query as a parameter.  The controller is now a very simple implementation of taking the Query and sending it to the QueryHandler and sending the result to the view.  The mediatR nuget package is made exactly to fill this need and is injected into the controller.</p>
+
+<pre><code class="csharp">
+
+
+        public class UiController : Controller
+        {
+            private readonly IMediator mediator;
+
+            public UiController(IMediator aMediator)
+            {
+                mediator = aMediator;
+            }
+
+            public virtual ActionResult Index(Query aQuery)
+            {
+                Result result = mediator.Send(aQuery);
+
+                return View(result);
+            }
+        }
+</code></pre>
+
+<p>Make sure to include the required using clauses.  Justcode or <code>ctrl.</code> will resolve them for you.</p>
+
+<h4>CommandProcessingRegistry</h4>
+
+<p>To use the Mediator we need to register the Mediator, Handlers and Validators with the Ioc container.</p>
+
+<p>Under the <code>Infrastructure</code> folder create a <code>CommandProcessing</code> folder and in this create the following registry class:</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Infrastructure.CommandProcessing
+{
+    using FluentValidation;
+    using MediatR;
+    using StructureMap.Configuration.DSL;
+
+    public class CommandProcessingRegistry : Registry
+    {
+        public CommandProcessingRegistry()
+        {
+            Scan(aAssemblyScanner =&gt;
+            {
+                aAssemblyScanner.AssemblyContainingType&lt;IMediator&gt;();
+                aAssemblyScanner.AssemblyContainingType&lt;CommandProcessingRegistry&gt;();
+
+                aAssemblyScanner.AddAllTypesOf(typeof(IRequestHandler&lt;,&gt;));
+                aAssemblyScanner.AddAllTypesOf(typeof(IAsyncRequestHandler&lt;,&gt;));
+                aAssemblyScanner.AddAllTypesOf(typeof(IValidator&lt;&gt;));
+                aAssemblyScanner.WithDefaultConventions();
+            });
+
+            For&lt;SingleInstanceFactory&gt;().Use&lt;SingleInstanceFactory&gt;(aContext =&gt; aType =&gt; aContext.GetInstance(aType));
+            For&lt;MultiInstanceFactory&gt;().Use&lt;MultiInstanceFactory&gt;(aContext =&gt; aType =&gt; aContext.GetAllInstances(aType));
+        }
+    }
+}
+</code></pre>
+
+<h3>User.Index.QueryHandler</h3>
+
+<p>Create a nested <code>QueryHandler</code> class inside the <code>Index</code> class.</p>
+
+<p>This will build the Result object which will be passed to the View.  It should contain 100% of the information needed for the view.</p>
+
+<pre><code class="csharp">
+
+    public class QueryHandler : IRequestHandler&lt;Query, Result&gt;
+        {
+            private IDbContextScopeFactory DbContextScopeFactory { get; }
+
+            public QueryHandler(IDbContextScopeFactory aDbContextScopeFactory)
+            {
+                DbContextScopeFactory = aDbContextScopeFactory;
+            }
+
+            public Result Handle(Query aQuery)
+            {
+                var result = new Result
+                {
+                    CurrentSort = aQuery.SortOrder,
+                    NameSortParm = String.IsNullOrEmpty(aQuery.SortOrder) ? "name_desc" : "",
+                };
+
+                if (aQuery.SearchString != null)
+                {
+                    aQuery.Page = 1;
+                }
+                else
+                {
+                    aQuery.SearchString = aQuery.CurrentFilter;
+                }
+
+                result.CurrentFilter = aQuery.SearchString;
+                result.SearchString = aQuery.SearchString;
+
+                using (var dbContextScope = DbContextScopeFactory.CreateReadOnly())
+                {
+                    Model model = dbContextScope.DbContexts.Get&lt;Model&gt;();
+                    IQueryable&lt;User&gt; users = from s in model.Users select s;
+                    if (!String.IsNullOrEmpty(aQuery.SearchString))
+                    {
+                        users = users.Where(aUser =&gt; aUser.LastName.Contains(aQuery.SearchString) || aUser.FirstAndMiddleName.Contains(aQuery.SearchString));
+                    }
+                    switch (aQuery.SortOrder)
+                    {
+                        case "name_desc":
+                            users = users.OrderByDescending(aUser =&gt; aUser.LastName);
+                            break;
+                        default: // Name ascending 
+                            users = users.OrderBy(aUser =&gt; aUser.LastName);
+                            break;
+                    }
+
+                    int pageSize = 3;
+                    int pageNumber = (aQuery.Page ?? 1);
+                    result.Users = users.ProjectToPagedList&lt;Result.User&gt;(pageNumber, pageSize);
+
+                    return result;
+                }
+            }
+        }
+</code></pre>
+
+<h3>MappingProfile</h3>
+
+<p>Automapper can be used to map between Domain entities and our Queries, Results and Commands. This mapping needs to be defined.</p>
+
+<p>Please add a nested <code>MappingProfile</code> class inside the <code>Index</code> class as follows:</p>
+
+<pre><code class="csharp">
+
+
+    public class MappingProfile : Profile
+    {
+        protected override void Configure()
+        {
+            CreateMap&lt;User, Index.Result.User&gt;();
+        }
+    }
+</code></pre>
+
+<p>So now that we have a model to submit to the view, let&rsquo;s update the view.</p>
+
+<p>First we will need some Html Helper items</p>
+
+<p>Create new <code>Extensions</code> folder under the <code>Infrastrcuture</code> Folder.</p>
+
+<h3>LinkBuilder.cs</h3>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.Extensions
+{
+    using System.Linq;
+    using System.Web.Mvc;
+    using System.Web.Routing;
+    using System.Collections.Generic;
+    using MoreLinq;
+
+    public static class LinkBuilder
+    {
+
+        public static void GetNamesFromController&lt;TController&gt;(out string aControllerName, out string aActionName) where TController : Controller
+        {
+            string fullname = typeof(TController).FullName;                //JimmyMvc.Features.User.Create+UiController
+            IEnumerable&lt;string&gt; lastTwo = fullname.Split('.').TakeLast(2); // User, Create+UiController
+            aControllerName = lastTwo.First();                             // User
+            aActionName = lastTwo.Last().Split('+').First();               // Create
+        }
+
+        public static string BuildUrlForController&lt;TController&gt;(RequestContext aRequestContext, object aRouteValues) where TController : Controller
+        {
+            string controllerName;
+            string actionName;
+            string url;
+
+            GetNamesFromController&lt;TController&gt;(out controllerName, out actionName);
+
+            if (aRouteValues == null)
+            {
+                url = $"{controllerName}/{actionName}";
+            }
+            else
+            {
+                var routeValueDictionary = new RouteValueDictionary(aRouteValues);
+                routeValueDictionary.Add(key: "Controller", value: controllerName);
+                routeValueDictionary.Add(key: "Action", value: actionName);
+                var urlHelper = new UrlHelper(aRequestContext);
+                url = urlHelper.Action(actionName, controllerName, routeValueDictionary);
+            }
+            return url;
+        }
+    }
+}
+</code></pre>
+
+<h4>HtmlHelperExtensions.cs</h4>
+
+<p>We will be using some html helper extensions here also that will be shown following.  These use the HtmlTags to generate html.</p>
+
+<p>Create <code>HtmlHelperExtensions</code> class under the Infrastructure folder</p>
+
+<p><img src="/assets/pictures/jimmy-mvc/HtmlHelperExtensions.png" alt="MediatRNuget" /></p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.Extensions
+{
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq.Expressions;
+    using System.Linq;
+    using MoreLinq;
+    using System.Web;
+    using System.Web.Mvc;
+    using System.Web.Mvc.Html;
+    using System.Web.Routing;
+    using App_Start;
+    using HtmlTags;
+    using HtmlTags.Conventions;
+    using HtmlTags.Conventions.Elements;
+    using Microsoft.Web.Mvc;
+
+    public static class HtmlHelperExtensions
+    {
+        public static string RequireJs(this HtmlHelper aHtmlHelper)
+        {
+            RouteValueDictionary values = aHtmlHelper.ViewContext.RouteData.Values;
+            string controllerName = values["controller"].ToString();
+            var viewContext = (RazorView)aHtmlHelper.ViewContext.View;
+            string viewName = Path.GetFileNameWithoutExtension(viewContext.ViewPath);
+            string requirePath = VirtualPathUtility.ToAbsolute(virtualPath: "~/Content/js/lib/require-2.1.18.js");
+
+            string loc = string.Format(format: "~/Features/{0}/{1}.js", arg0: controllerName, arg1: viewName);
+
+            if (File.Exists(aHtmlHelper.ViewContext.HttpContext.Server.MapPath(loc)))
+            {
+                string scriptBlock = "&lt;script data-main='{0}' src='{1}'&gt;&lt;/script&gt;";
+
+                return string.Format(scriptBlock, VirtualPathUtility.ToAbsolute(loc), requirePath);
+            }
+
+            return string.Empty;
+        }
+
+        public static HtmlTag Input&lt;T&gt;(this HtmlHelper&lt;T&gt; aHtmlHelper, Expression&lt;Func&lt;T, object&gt;&gt; aExpression)
+                where T : class
+        {
+            IElementGenerator&lt;T&gt; generator = GetGenerator(aHtmlHelper.ViewData.Model);
+            return generator.InputFor(aExpression);
+        }
+
+        public static HtmlTag Label&lt;T&gt;(this HtmlHelper&lt;T&gt; aHtmlHelper, Expression&lt;Func&lt;T, object&gt;&gt; aExpression)
+                where T : class
+        {
+            IElementGenerator&lt;T&gt; generator = GetGenerator(aHtmlHelper.ViewData.Model);
+            return generator.LabelFor(aExpression);
+        }
+
+        public static HtmlTag Display&lt;T&gt;(this HtmlHelper&lt;T&gt; aHtmlHelper, Expression&lt;Func&lt;T, object&gt;&gt; aExpression)
+                where T : class
+        {
+            IElementGenerator&lt;T&gt; generator = GetGenerator(aHtmlHelper.ViewData.Model);
+            return generator.DisplayFor(aExpression);
+        }
+
+        public static HtmlTag DisplayLabel&lt;T&gt;(this HtmlHelper&lt;T&gt; aHtmlHelper, Expression&lt;Func&lt;T, object&gt;&gt; aExpression)
+                where T : class
+        {
+            IElementGenerator&lt;T&gt; generator = GetGenerator(aHtmlHelper.ViewData.Model);
+            return generator.TagFor(aExpression, category: "DisplayLabels");
+        }
+
+        public static HtmlTag DisplayLabel&lt;T&gt;(this HtmlHelper&lt;IList&lt;T&gt;&gt; aHtmlHelper, Expression&lt;Func&lt;T, object&gt;&gt; aExpression)
+                where T : class
+        {
+            IElementGenerator&lt;T&gt; generator = GetGenerator(default(T));
+            return generator.TagFor(aExpression, category: "DisplayLabels");
+        }
+
+        public static MvcHtmlString DisplayNameFor&lt;TModel, TValue&gt;(this HtmlHelper&lt;IList&lt;TModel&gt;&gt; aHtmlHelper,
+                Expression&lt;Func&lt;TModel, TValue&gt;&gt; aExpression)
+        {
+            return new HtmlHelper&lt;IEnumerable&lt;TModel&gt;&gt;(aHtmlHelper.ViewContext, aHtmlHelper.ViewDataContainer).DisplayNameFor(aExpression);
+        }
+
+        public static HtmlTag InputBlock&lt;T&gt;(this HtmlHelper&lt;T&gt; aHtmlHelper,
+                Expression&lt;Func&lt;T, object&gt;&gt; aExpression,
+                Action&lt;HtmlTag&gt; aInputModifier = null) where T : class
+        {
+            aInputModifier = aInputModifier ?? (aHtmlTag =&gt; { });
+
+            var divTag = new HtmlTag(tag: "div");
+            divTag.AddClass(className: "col-md-10");
+
+            HtmlTag inputTag = aHtmlHelper.Input(aExpression);
+            aInputModifier(inputTag);
+
+            divTag.Append(inputTag);
+
+            return divTag;
+        }
+
+        public static HtmlTag FormBlock&lt;T&gt;(this HtmlHelper&lt;T&gt; aHtmlHelper,
+                Expression&lt;Func&lt;T, object&gt;&gt; aExpression,
+                Action&lt;HtmlTag&gt; aLabelModifier = null,
+                Action&lt;HtmlTag&gt; aInputBlockModifier = null,
+                Action&lt;HtmlTag&gt; aInputModifier = null
+                ) where T : class
+        {
+            aLabelModifier = aLabelModifier ?? (aHtmlTag =&gt; { });
+            aInputBlockModifier = aInputBlockModifier ?? (aHtmlTag =&gt; { });
+
+            var divTag = new HtmlTag(tag: "div");
+            divTag.AddClass(className: "form-group");
+
+            HtmlTag labelTag = aHtmlHelper.Label(aExpression);
+            aLabelModifier(labelTag);
+
+            HtmlTag inputBlockTag = aHtmlHelper.InputBlock(
+                    aExpression,
+                    aInputModifier);
+            aInputBlockModifier(inputBlockTag);
+
+            divTag.Append(labelTag);
+            divTag.Append(inputBlockTag);
+
+            return divTag;
+        }
+
+        public static HtmlTag ValidationDiv(this HtmlHelper aHtmlHelper)
+        {
+            return new HtmlTag(tag: "div")
+                    .Id(id: "validationSummary")
+                    .AddClass(className: "alert")
+                    .AddClass(className: "alert-danger")
+                    .AddClass(className: "hidden");
+        }
+
+        public static HtmlTag FeatureLink&lt;TController&gt;(this HtmlHelper aHtmlHelper, string aLinkText) where TController : Controller
+        {
+            string controllerName, actionName;
+
+            LinkBuilder.GetNamesFromController&lt;TController&gt;(out controllerName, out actionName);
+            string url = $"{controllerName}/{actionName}";
+
+            return Link(aHtmlHelper, aLinkText, url);
+        }
+
+
+        public static HtmlTag FeatureLink&lt;TController&gt;(this HtmlHelper aHtmlHelper, string aLinkText, object aRouteValues) where TController : Controller
+        {
+            string controllerName, actionName;
+            LinkBuilder.GetNamesFromController&lt;TController&gt;(out controllerName, out actionName);
+
+            var routeValueDictionary = new RouteValueDictionary(aRouteValues);
+            routeValueDictionary.Add(key: "Controller", value: controllerName);
+            routeValueDictionary.Add(key: "Action", value: actionName);
+            var urlHelper = new UrlHelper(aHtmlHelper.ViewContext.RequestContext);
+            string url = urlHelper.Action(actionName, controllerName, routeValueDictionary);
+
+            return Link(aHtmlHelper, aLinkText, url);
+        }
+
+        private static HtmlTag Link(HtmlHelper aHtmlHelper, string aLinkText, string aUrl)
+        {
+            aUrl = "~/" + aUrl;
+            aUrl = UrlHelper.GenerateContentUrl(aUrl, aHtmlHelper.ViewContext.HttpContext);
+
+            return new HtmlTag(tag: "a", configure: aHtmlTag =&gt;
+            {
+                aHtmlTag.Text(aLinkText);
+                aHtmlTag.Attr(attribute: "href", value: aUrl);
+            });
+        }
+
+        private static IElementGenerator&lt;T&gt; GetGenerator&lt;T&gt;(T aModel) where T : class
+        {
+            HtmlConventionLibrary library = StructuremapMvc.StructureMapDependencyScope.CurrentNestedContainer.GetInstance&lt;HtmlConventionLibrary&gt;();
+            return ElementGenerator&lt;T&gt;.For(library, aType =&gt; StructuremapMvc.StructureMapDependencyScope.CurrentNestedContainer.GetInstance(aType), aModel);
+        }
+    }
+}
+</code></pre>
+
+<p>In <code>Features\Web.config</code> make sure you add</p>
+
+<p><code>&lt;add namespace="JimmyMvc.Infrastructure.Extensions" /&gt;</code></p>
+
+<p>in:</p>
+
+<pre><code class="xml">
+  &lt;system.web.webPages.razor&gt;
+    &lt;host factoryType="System.Web.Mvc.MvcWebRazorHostFactory, System.Web.Mvc, Version=5.2.2.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" /&gt;
+    &lt;pages pageBaseType="System.Web.Mvc.WebViewPage"&gt;
+      &lt;namespaces&gt;
+        &lt;add namespace="System.Web.Mvc" /&gt;
+        &lt;add namespace="System.Web.Mvc.Ajax" /&gt;
+        &lt;add namespace="System.Web.Mvc.Html" /&gt;
+        &lt;add namespace="System.Web.Optimization"/&gt;
+        &lt;add namespace="System.Web.Routing" /&gt;
+        &lt;add namespace="JimmyMvc" /&gt;
+        &lt;add namespace="JimmyMvc.Infrastructure.Extensions" /&gt;              
+      &lt;/namespaces&gt;
+    &lt;/pages&gt;
+  &lt;/system.web.webPages.razor&gt;
+</code></pre>
+
+<p>This will make the extension available for all views.</p>
+
+<h2>UrlHelperExtensions</h2>
+
+<p>Create class <code>UrlHelperExtensions</code> in the <code>Infrastructure/Extensions</code> Folder as follows:</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.Extensions
+{
+    using System;
+    using System.Linq.Expressions;
+    using System.Web.Mvc;
+    using System.Web.Routing;
+
+    public static class UrlHelperExtensions
+    {
+        public static string Feature&lt;TController&gt;(this UrlHelper aUrlHelper, Object aRouteValues = null)
+            where TController : Controller
+        {
+            string url = LinkBuilder.BuildUrlForController&lt;TController&gt;(aUrlHelper.RequestContext, aRouteValues);
+
+            return UrlHelper.GenerateContentUrl("~/" + url, aUrlHelper.RequestContext.HttpContext);
+        }
+    }
+}
+</code></pre>
+
+<p>One of the nice things about the extensions are the elimination of magic strings in your cshtml and they give you compile time type checking.</p>
+
+<h3>_Layout.cshtml</h3>
+
+<p> As an example lets update the _Layout.cshtml file replacing the ActionLink that uses magic strings with FeatureLink:</p>
+
+<pre><code class="csharp">
+
+@using Home = JimmyMvc.Features.Home
+@using User = JimmyMvc.Features.User
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="utf-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;@ViewBag.Title - My ASP.NET Application&lt;/title&gt;
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="navbar navbar-inverse navbar-fixed-top"&gt;
+        &lt;div class="container"&gt;
+            &lt;div class="navbar-header"&gt;
+                &lt;button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse"&gt;
+                    &lt;span class="icon-bar"&gt;&lt;/span&gt;
+                    &lt;span class="icon-bar"&gt;&lt;/span&gt;
+                    &lt;span class="icon-bar"&gt;&lt;/span&gt;
+                &lt;/button&gt;
+                @(Html.FeatureLink&lt;Home.Index.UiController&gt;(aLinkText: "Application name").AddClass("navbar-brand"))
+            &lt;/div&gt;
+            &lt;div class="navbar-collapse collapse"&gt;
+                &lt;ul class="nav navbar-nav"&gt;
+                    &lt;li&gt;@(Html.FeatureLink&lt;Home.Index.UiController&gt;(aLinkText: "Home"))&lt;/li&gt;
+                    &lt;li&gt;@(Html.FeatureLink&lt;Home.About.UiController&gt;(aLinkText: "About"))&lt;/li&gt;
+                    &lt;li&gt;@(Html.FeatureLink&lt;Home.Contact.UiController&gt;(aLinkText: "Contact"))&lt;/li&gt;
+                    &lt;li&gt;@(Html.FeatureLink&lt;User.Index.UiController&gt;(aLinkText: "Users"))&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="container body-content"&gt;
+        @RenderBody()
+        &lt;hr /&gt;
+        &lt;footer&gt;
+            &lt;p&gt;&amp;copy; @DateTime.Now.Year - My ASP.NET Application&lt;/p&gt;
+        &lt;/footer&gt;
+    &lt;/div&gt;
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<h3>Index.cshtml</h3>
+
+<p>```csharp</p>
+
+<p>@model Index.Result
+@using JimmyMvc.Features.User;
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" /></p>
+
+<p>@{
+  ViewBag.Title = &ldquo;Users&rdquo;;
+}</p>
+
+<h2>Users</h2>
+
+
+
+
+<p>
+    @*@(Html.FeatureLink<Create.UiController>(aLinkText: "Create New"))*@
+</p>
+
+
+<p><form method="GET">
+    <p>
+        Find by name: @Html.Input(aResult => aResult.SearchString).RemoveClass(className: &ldquo;form-control&rdquo;)
+        <input type="submit" value="Search" />
+    </p>
+</form></p>
+
+<table class="table">
+    <tr>
+        <th>
+            @(Html.FeatureLink<Index.UiController>(aLinkText: "Last Name", aRouteValues: new Index.Query { SortOrder = Model.NameSortParm, CurrentFilter = Model.CurrentFilter }))
+        </th>
+        <th>
+            First Name
+        </th>
+        <th></th>
+    </tr>
+
+
+    @{ int i = 0; }
+    @foreach (var item in Model.Users)
+    {
+    <tr>
+        <td>
+            @Html.Display(aResult => aResult.Users[i].LastName)
+        </td>
+        <td>
+            @Html.Display(aResult => aResult.Users[i].FirstAndMiddleName)
+        </td>
+        <td>
+            @*@(Html.FeatureLink<Edit.UiController>(aLinkText: "Edit", aRouteValues: new Edit.Query { UserId = item.UserId })) |*@
+            @*@(Html.FeatureLink<Details.UiController>(aLinkText: "Details", aRouteValues: new Details.Query { UserId = item.UserId })) |*@
+            @*@(Html.FeatureLink<Delete.UiController>(aLinkText: "Delete", aRouteValues: new Delete.Query { UserId = item.UserId }))*@
+        </td>
+    </tr>
+        i++;
+    }
+
+</table>
+
+
+<p><br />
+        Page @(Model.Users.PageCount &lt; Model.Users.PageNumber ? 0 : Model.Users.PageNumber) of @Model.Users.PageCount</p>
+
+<pre><code>    @(Html.PagedListPager(Model.Users, aPage =&gt; Url.Feature&lt;Index.UiController&gt;(aRouteValues: new Index.Query { Page = aPage, SortOrder = Model.CurrentSort, CurrentFilter = Model.CurrentFilter })))
+</code></pre>
+
+<pre><code>We have commented out our future links since the Create,Edit,Details,Delete Features are yet to be completed.
+
+Build and run and now you should be able to see the Users list with paging. All features currently implemented should now be functional.
+
+# Feature User/Details #
+Now we have most of the foundation we need to start cranking out some features.  The details feature is the most similar to the Index feature in that we have a Query, QueryHandler, Result, UiController, Mapping and a View. So will go there next, although this time we are going to use an asynchronous process. 
+
+Create the `Details` class in the User Directory
+
+## User.Details##
+We have a trivial Query object in that we only need the UserId. The result of the query will be the User information and a list of owned ApprovalListTemplates. 
+</code></pre>
+
+<p>namespace JimmyMvc.Features.User
+{
+    using AutoMapper;
+    using Entities;
+    using MediatR;
+    using Mehdime.Entity;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Web;
+    using System.Web.Mvc;
+    public class Details
+    {
+        public class Query : IAsyncRequest<Result>
+        {
+            public int? UserId { get; set; }
+        }</p>
+
+<pre><code>    public class Result
+    {
+        public int UserId { get; set; }
+
+        [Display(Name = "First Name")]
+        public string FirstAndMiddleName { get; set; }
+        public string LastName { get; set; }
+        public List&lt;ApprovalListTemplate&gt; ApprovalListTemplates { get; set; }
+
+        public class ApprovalListTemplate
+        {
+            public string Name { get; set; }
+            public int RecipientCount { get; set; }
+        }
+    }
+
+    public class QueryHandler : IAsyncRequestHandler&lt;Query, Result&gt;
+    {
+        private IDbContextScopeFactory DbContextScopeFactory { get; }
+
+        public QueryHandler(IDbContextScopeFactory aDbContextScopeFactory)
+        {
+            DbContextScopeFactory = aDbContextScopeFactory;
+        }
+
+        public async Task&lt;Result&gt; Handle(Query aQuery)
+        {
+            using (var dbContextScope = DbContextScopeFactory.CreateReadOnly())
+            {
+                Model model = dbContextScope.DbContexts.Get&lt;Model&gt;();
+                Result result = await model.Users.Where(aUser =&gt; aUser.UserId == aQuery.UserId).ProjectToSingleOrDefaultAsync&lt;Result&gt;();
+
+                result.ApprovalListTemplates = new List&lt;Result.ApprovalListTemplate&gt;();
+                return result;
+            }
+        }
+    }
+
+    public class UiController : Controller
+    {
+        private readonly IMediator mediator;
+
+        public UiController(IMediator aMediator)
+        {
+            mediator = aMediator;
+        }
+
+        public virtual async Task&lt;ActionResult&gt; Action(Query aQuery)
+        {
+            Result result = await mediator.SendAsync(aQuery);
+
+            return View(result);
+
+        }
+    }
+
+    public class MappingProfile : Profile
+    {
+        protected override void Configure()
+        {
+            CreateMap&lt;User, Result&gt;();
+            //CreateMap&lt;ApprovalListTemplate, Result.ApprovalListTemplate&gt;();
+        }
+    }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<h2>Index.cshtml</h2>
+
+<p>Update the <code>Index.cshtml</code> page to now link to the Details page by uncommenting the FeatureLink.</p>
+
+<p><code>@(Html.FeatureLink&lt;Details.UiController&gt;(aLinkText: "Details", aRouteValues: new Details.Query { UserId = item.UserId })) |</code></p>
+
+<h2>Deatails.cshtml</h2>
+
+<p>Create the Details.cshtml View</p>
+
+<p>```csharp</p>
+
+<p>@using JimmyMvc.Features.User
+@model Details.Result</p>
+
+<p>@{
+  ViewBag.Title = &ldquo;Details&rdquo;;
+}</p>
+
+<h2>Details</h2>
+
+
+
+
+<div>
+    <h4>User</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayLabel(aModel => aModel.LastName)
+        </dt>
+
+        <dd>
+            @Html.Display(aModel => aModel.LastName)
+        </dd>
+
+        <dt>
+            @Html.DisplayLabel(aModel => aModel.FirstAndMiddleName)
+        </dt>
+
+        <dd>
+            @Html.Display(aModel => aModel.FirstAndMiddleName)
+        </dd>
+        <dt>
+            @Html.DisplayLabel(aModel => aModel.ApprovalListTemplates)
+        </dt>
+        <dd>
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Recipient Count</th>
+                </tr>
+                @for (var i = 0; i < Model.ApprovalListTemplates.Count; i++)
+                {
+                <tr>
+                    <td>
+                        @Html.Display(aResult => aResult.ApprovalListTemplates[i].Name)
+                    </td>
+                    <td>
+                        @Html.Display(aResult => aResult.ApprovalListTemplates[i].RecipientCount)
+                    </td>
+                </tr>
+                }
+            </table>
+        </dd>
+    </dl>
+</div>
+
+
+<p>
+    @*@(Html.FeatureLink<Edit.UiController>(aLinkText: "Edit", aRouteValues: new Edit.Query { UserId = Model.UserId })) |*@
+    @(Html.FeatureLink<Index.UiController>(aLinkText: "Back to List"))
+</p>
+
+
+<pre><code>
+Excute and run.
+
+Notice we commented out the Edit link above as we have yet to implment that feature. I would like to do that now. But first we must introduce Validation.
+
+
+### Validation ###
+Typically Validation is done on each controller doing something like
+</code></pre>
+
+<p>[HttpPost]
+public ActionResult Edit(Model form)
+{
+    if (!ModelState.IsValid)
+    {
+        return View(form);
+    }
+```
+The solution we are going to implement is documented <a href="http://timgthomas.com/2013/09/simplify-client-side-validation-by-adding-a-server/">here</a></p>
+
+<p>Create a <code>Validation</code> folder under the <code>Infrastructure</code> Folder.</p>
+
+<h2>ValidationActionFilter</h2>
+
+<p>Using an existing MVC Extension point create an ActionFilter that intercepts the action if the ModelState is NOT valid it will return a json serialized version of the ModelState.</p>
+
+<pre><code class="csharp">
+
+
+namespace JimmyMvc.Infrastructure.Validation
+{
+    using System.Net;
+    using System.Web.Mvc;
+    using Newtonsoft.Json;
+
+    public class ValidatorActionFilter : IActionFilter
+    {
+        public void OnActionExecuting(ActionExecutingContext aFilterContext)
+        {
+            if (!aFilterContext.Controller.ViewData.ModelState.IsValid)
+            {
+                if (aFilterContext.HttpContext.Request.HttpMethod == "GET")
+                {
+                    var result = new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    aFilterContext.Result = result;
+                }
+                else
+                {
+                    var result = new ContentResult();
+                    string content = JsonConvert.SerializeObject(aFilterContext.Controller.ViewData.ModelState,
+                            new JsonSerializerSettings
+                            {
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            });
+                    result.Content = content;
+                    result.ContentType = "application/json";
+
+                    aFilterContext.HttpContext.Response.StatusCode = 400;
+                    aFilterContext.Result = result;
+                }
+            }
+        }
+
+        public void OnActionExecuted(ActionExecutedContext aFilterContext)
+        {
+
+        }
+    }
+}
+</code></pre>
+
+<h2>FilterConfig.cs</h2>
+
+<p>Add the filter by updating the <code>App_Start\FilterConfig.cs</code> file to be as follows:</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc
+{
+    using JimmyMvc.Infrastructure.Validation;
+    using System.Web.Mvc;
+
+    public class FilterConfig
+    {
+        public static void RegisterGlobalFilters(GlobalFilterCollection aGlobalFilterCollection)
+        {
+            aGlobalFilterCollection.Add(new HandleErrorAttribute());
+            aGlobalFilterCollection.Add(new ValidatorActionFilter());
+        }
+    }
+}
+</code></pre>
+
+<h2>StructureMapValidatorFactory</h2>
+
+<p>Create the <code>StructureMapValidatorFactory</code> class in the <code>Infrastructure\Validation</code> folder as follows:</p>
+
+<pre><code class="csharp">
+namespace JimmyMvc.Infrastructure.Validation
+{
+    using System;
+    using App_Start;
+    using FluentValidation;
+
+    public class StructureMapValidatorFactory : ValidatorFactoryBase
+    {
+        public override IValidator CreateInstance(Type aValidatorType)
+        {
+            return StructuremapMvc.StructureMapDependencyScope.CurrentNestedContainer.TryGetInstance(aValidatorType) as IValidator;
+        }
+    }
+}
+</code></pre>
+
+<h2>AjaxValidation.js</h2>
+
+<p>Create the AjaxValidation.js file in the Scripts folder as follows:</p>
+
+<pre><code class="JavaScript">var highlightFields = function (response) {
+
+    $('.form-group').removeClass('has-error');
+
+    $.each(response, function (propName, val) {
+        var nameSelector = '[name = "' + propName.replace(/(:|\.|\[|\])/g, "\\$1") + '"]',
+            idSelector = '#' + propName.replace(/(:|\.|\[|\])/g, "\\$1");
+        var $el = $(nameSelector) || $(idSelector);
+
+        if (val.Errors.length &gt; 0) {
+            $el.closest('.form-group').addClass('has-error');
+        }
+    });
+};
+var highlightErrors = function (xhr) {
+    try {
+        var data = JSON.parse(xhr.responseText);
+        highlightFields(data);
+        showSummary(data);
+        window.scrollTo(0, 0);
+    } catch (e) {
+        // (Hopefully) caught by the generic error handler in `config.js`.
+    }
+};
+var showSummary = function (response) {
+    $('#validationSummary').empty().removeClass('hidden');
+
+    var verboseErrors = _.flatten(_.pluck(response, 'Errors')),
+        errors = [];
+
+    var nonNullErrors = _.reject(verboseErrors, function (error) {
+        return error.ErrorMessage.indexOf('must not be empty') &gt; -1;
+    });
+
+    _.each(nonNullErrors, function (error) {
+        errors.push(error.ErrorMessage);
+    });
+
+    if (nonNullErrors.length !== verboseErrors.length) {
+        errors.push('The highlighted fields are required to submit this form.');
+    }
+
+    var $ul = $('#validationSummary').append('&lt;ul&gt;&lt;/ul&gt;');
+
+    _.each(errors, function (error) {
+        var $li = $('&lt;li&gt;&lt;/li&gt;').text(error);
+        $li.appendTo($ul);
+    });
+};
+var redirect = function (data) {
+    if (data.redirect) {
+        window.location = data.redirect;
+    } else {
+        window.scrollTo(0, 0);
+        window.location.reload();
+    }
+};
+
+$('form[method=post]').not('.no-ajax').on('submit', function () {
+    var submitBtn = $(this).find('[type="submit"]');
+
+    submitBtn.prop('disabled', true);
+    $(window).unbind();
+
+    var $this = $(this),
+        formData = $this.serialize();
+
+    $this.find('div').removeClass('has-error');
+
+    $.ajax({
+        url: $this.attr('action'),
+        type: 'post',
+        data: formData,
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        dataType: 'json',
+        statusCode: {
+            200: redirect
+        },
+        complete: function () {
+            submitBtn.prop('disabled', false);
+        }
+    }).error(highlightErrors);
+
+    return false;
+});
+</code></pre>
+
+<h2>Update BundleConfig.cs</h2>
+
+<p>Add to the bundle.</p>
+
+<pre><code class="csharp">
+
+            bundles.Add(new ScriptBundle("~/bundles/lodash").Include(
+                                            "~/Scripts/lodash.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/AjaxValidation").Include(
+                                            "~/Scripts/AjaxValidation.js"));
+</code></pre>
+
+<h2>_Layout.cshtml</h2>
+
+<p>In the head just below <code>@Scripts.Render("~/bundles/modernizr")</code> add the following:
+<code>@Scripts.Render("~/bundles/lodash")</code></p>
+
+<p>Add the javascript just before the closing body tag, to intercept the form post and convert it to an ajax json call for validation as follows:</p>
+
+<p><code>@Scripts.Render("~/bundles/AjaxValidation")</code></p>
+
+<h2>DefaultRegistry</h2>
+
+<p>Update the IoC <code>DefaultRegistry.cs</code> file to use the StructureMapValidatorFactory</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.DependencyResolution
+{
+    using Entities;
+    using FluentValidation;
+    using Infrastructure;
+    using StructureMap.Configuration.DSL;
+    using StructureMap.Graph;
+    using StructureMap.Pipeline;
+    using System.Web.Mvc;
+    using Infrastructure.Validation;
+    using Mehdime.Entity;
+
+    public class DefaultRegistry : Registry
+    {
+        #region Constructors and Destructors
+
+        public DefaultRegistry()
+        {
+            Scan(
+                            aAssemblyScanner =&gt;
+                            {
+                                aAssemblyScanner.TheCallingAssembly();
+                                aAssemblyScanner.WithDefaultConventions();
+                                aAssemblyScanner.LookForRegistries();
+                                aAssemblyScanner.AssemblyContainingType&lt;DefaultRegistry&gt;();
+                                aAssemblyScanner.AddAllTypesOf(typeof(IModelBinder));
+                                aAssemblyScanner.AddAllTypesOf(typeof(IModelBinderProvider));
+                                aAssemblyScanner.With(new ControllerConvention());
+                            });
+            For&lt;ModelValidatorProvider&gt;().Use&lt;FluentValidationModelValidatorProvider&gt;();
+            For&lt;IControllerFactory&gt;().Use&lt;ControllerFactory&gt;();
+            For&lt;IDbContextFactory&gt;().Use&lt;DbContextFactory&gt;().LifecycleIs&lt;ContainerLifecycle&gt;();
+            For&lt;IDbContextScopeFactory&gt;().Use&lt;DbContextScopeFactory&gt;().LifecycleIs&lt;ContainerLifecycle&gt;();
+            For&lt;IAmbientDbContextLocator&gt;().Use&lt;AmbientDbContextLocator&gt;().LifecycleIs&lt;ContainerLifecycle&gt;();
+            For&lt;IValidatorFactory&gt;().Use&lt;StructureMapValidatorFactory&gt;();
+        }
+
+        #endregion
+    }
+}
+</code></pre>
+
+<h2>ControllerExtensions</h2>
+
+<p>Create class <code>ControllerExtensions</code> in the <code>Infrastructure/Extensions</code> Folder as follows:</p>
+
+<pre><code class="csharp">
+namespace JimmyMvc.Infrastructure.Extensions
+{
+    using System;
+    using System.Linq.Expressions;
+    using System.Web.Mvc;
+    using Newtonsoft.Json;
+
+    public static class ControllerExtensions
+    {
+        public static ActionResult RedirectToFeatureJson&lt;TController&gt;(this Controller aController, Object aRouteValues = null)
+            where TController : Controller
+        {
+            return aController.JsonNet(new
+            {
+                redirect = aController.Url.Feature&lt;TController&gt;(aRouteValues)
+            });
+        }
+
+        public static ContentResult JsonNet(this Controller aController, object aModel)
+        {
+            string serialized = JsonConvert.SerializeObject(aModel, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+
+            return new ContentResult
+            {
+                Content = serialized,
+                ContentType = "application/json"
+            };
+        }
+    }
+}
+</code></pre>
+
+<p>This completes the Validation infrastrucuture.</p>
+
+<h1>Feature User/Edit</h1>
+
+<p>Create <code>Edit</code> class under the User Folder.</p>
+
+<h2>User.Edit.Query</h2>
+
+<p>Add the following nested Query class.</p>
+
+<pre><code class="csharp">
+
+
+        public class Query : IAsyncRequest&lt;Command&gt;
+        {
+            public int? UserId { get; set; }
+        }
+</code></pre>
+
+<h2>User.Edit.QueryValidator</h2>
+
+<p>We will add validation for this query using the FluentValidation.  Add a nested QueryValidation class as follows:</p>
+
+<pre><code class="csharp">
+
+        public class QueryValidator : AbstractValidator&lt;Query&gt;
+        {
+            public QueryValidator()
+            {
+                RuleFor(aQuery =&gt; aQuery.UserId).NotNull();
+            }
+        }
+</code></pre>
+
+<h2>User.Edit.QueryHandler</h2>
+
+<p>The query handler is rather simple linq query projected via automapper onto the Command/Result.</p>
+
+<pre><code class="csharp">
+
+    public class QueryHandler : IAsyncRequestHandler&lt;Query, Command&gt;
+        {
+            private IDbContextScopeFactory DbContextScopeFactory { get; }
+
+            public QueryHandler(IDbContextScopeFactory aDbContextScopeFactory)
+            {
+                DbContextScopeFactory = aDbContextScopeFactory;
+            }
+
+            public async Task&lt;Command&gt; Handle(Query aQuery)
+            {
+                using (var dbContextScope = DbContextScopeFactory.CreateReadOnly())
+                {
+                    Model model = dbContextScope.DbContexts.Get&lt;Model&gt;();
+                    return await model.Users
+                        .Where(aUser =&gt; aUser.UserId == aQuery.UserId)
+                        .ProjectToSingleOrDefaultAsync&lt;Command&gt;();
+                }
+            }
+        }
+</code></pre>
+
+<h2>User.Edit.Command</h2>
+
+<p>So the Command object is the result of the Query and would be the model usd in the view. A modified version will be posted back.</p>
+
+<pre><code class="csharp">
+
+        public class Command : IAsyncRequest
+        {
+            public int UserId { get; set; }
+            public string LastName { get; set; }
+
+            [Display(Name = "First Name")]
+            public string FirstAndMiddleName { get; set; }
+
+        }
+</code></pre>
+
+<h2>User.Edit.CommandHandler</h2>
+
+<p>The command handler is the post and execution of the command.</p>
+
+<pre><code class="csharp">
+
+        public class CommandHandler : AsyncRequestHandler&lt;Command&gt;
+        {
+            private IDbContextScopeFactory DbContextScopeFactory { get; }
+
+            public CommandHandler(IDbContextScopeFactory aDbContextScopeFactory)
+            {
+                DbContextScopeFactory = aDbContextScopeFactory;
+            }
+
+            protected override async Task HandleCore(Command aCommand)
+            {
+                using (var dbContextScope = DbContextScopeFactory.Create())
+                {
+                    Model model = dbContextScope.DbContexts.Get&lt;Model&gt;();
+                    User user = await model.Users.FindAsync(aCommand.UserId);
+
+                    Mapper.Map(aCommand, user);
+                    await dbContextScope.SaveChangesAsync();
+                }
+            }
+        }
+</code></pre>
+
+<h2>User.Edit.UiController</h2>
+
+<pre><code class="csharp">
+
+
+        public class UiController : Controller
+        {
+            private readonly IMediator mediator;
+
+            public UiController(IMediator aMediator)
+            {
+                mediator = aMediator;
+            }
+
+            public virtual async Task&lt;ActionResult&gt; Action(Query aQuery)
+            {
+                Command result = await mediator.SendAsync(aQuery);
+
+                return View(result);
+
+            }
+
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public virtual async Task&lt;ActionResult&gt; Action(Command aCommand)
+            {
+                await mediator.SendAsync(aCommand);
+
+                return this.RedirectToFeatureJson&lt;Index.UiController&gt;();
+            }
+        }
+</code></pre>
+
+<h2>MappingProfile</h2>
+
+<p>Create the Map between a User and the Command  and also the reverse.</p>
+
+<pre><code class="csharp">
+
+        public class MappingProfile : Profile
+        {
+            protected override void Configure()
+            {
+                CreateMap&lt;User, Command&gt;().ReverseMap();
+            }
+        }
+</code></pre>
+
+<h2>User/Edit.cshtml</h2>
+
+<p>Create Edit.cshtml as follows:</p>
+
+<p>```csharp</p>
+
+<p>@using JimmyMvc.Features.User
+@model Edit.Command</p>
+
+<p>@{
+  ViewBag.Title = &ldquo;Edit&rdquo;;
+}</p>
+
+<h2>Edit</h2>
+
+
+<p>@using (Html.BeginForm())
+{
+@Html.AntiForgeryToken()</p>
+
+<div class="form-horizontal">
+    <h4>User</h4>
+    <hr />
+    @Html.ValidationDiv()
+    @Html.Input(aCommand => aCommand.UserId)
+    @Html.FormBlock(aCommand => aCommand.LastName)
+    @Html.FormBlock(aCommand => aCommand.FirstAndMiddleName)
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+
+
+<p>}</p>
+
+<div>
+    @(Html.FeatureLink<Index.UiController>(aLinkText: "Back to List"))
+</div>
+
+
+<p>@section Scripts {
+    @Scripts.Render(paths: &ldquo;~/bundles/jqueryval&rdquo;)
+}</p>
+
+<pre><code>
+## Index.cshtml ##
+Update the `Index.cshtml` page to now link to the Edit page
+
+Uncomment the Edit Link as:
+
+`@(Html.FeatureLink&lt;Edit.UiController&gt;(aLinkText: "Edit", aRouteValues: new Edit.Query { UserId = item.UserId })) |`
+
+
+## User/Details.cshtml ##
+Uncomment the Edit Link on the `Details.cshtml`
+
+`@(Html.FeatureLink&lt;Edit.UiController&gt;(aLinkText: "Edit", aRouteValues: new Edit.Query { UserId = Model.UserId })) |`
+
+Build run and test.
+
+# Feature User/Create #
+We are going to implement this synchronously.
+Create the `Create.cs` class in the `User` folder. 
+
+## User.Create.Query ##
+Create the nested Query class in the Create class as follows:
+This really is an empty class which means simply that their is no information needed but the request will return a Command.  
+</code></pre>
+
+<pre><code>    public class Query: IRequest&lt;Command&gt;{}
+</code></pre>
+
+<pre><code>
+## User.Create.QueryHandler ##
+This just creates a new command object and returns it. 
+</code></pre>
+
+<pre><code>    public class QueryHandler : IRequestHandler&lt;Query, Command&gt;
+    {
+        public Command Handle(Query aQuery)
+        {
+            return new Command();
+        }
+    }
+</code></pre>
+
+<pre><code>
+## User.Create.Command ##
+</code></pre>
+
+<pre><code>    public class Command : IRequest
+    {
+        public string LastName { get; set; }
+
+        [Display(Name = "First Name")]
+        public string FirstAndMiddleName { get; set; }
+    }
+</code></pre>
+
+<pre><code>
+
+## User.Create.CommandValidator ##
+</code></pre>
+
+<pre><code>    public class CommandValidator : AbstractValidator&lt;Command&gt;
+    {
+        public CommandValidator()
+        {
+            RuleFor(aCommand =&gt; aCommand.LastName).NotNull().Length(min: 1, max: 50);
+            RuleFor(aCommand =&gt; aCommand.FirstAndMiddleName).NotNull().Length(min: 1, max: 50);
+        }
+    }
+</code></pre>
+
+<pre><code>## User.Create.CommandHandler ##
+</code></pre>
+
+<pre><code>    public class CommandHandler : RequestHandler&lt;Command&gt;
+    {
+        private IDbContextScopeFactory DbContextScopeFactory { get; }
+
+        public CommandHandler(IDbContextScopeFactory aDbContextScopeFactory)
+        {
+            DbContextScopeFactory = aDbContextScopeFactory;
+        }
+
+        protected override void HandleCore(Command aCommand)
+        {
+            User user = Mapper.Map&lt;Command, User&gt;(aCommand);
+            using (var dbContextScope = DbContextScopeFactory.Create())
+            {
+                Model model = dbContextScope.DbContexts.Get&lt;Model&gt;();
+                model.Users.Add(user);
+                dbContextScope.SaveChanges();
+            }
+        }
+    }
+</code></pre>
+
+<pre><code>
+## User.Create.UiController ##
+</code></pre>
+
+<pre><code>    public class UiController : Controller
+    {
+        private readonly IMediator mediator;
+
+        public UiController(IMediator aMediator)
+        {
+            mediator = aMediator;
+        }
+
+        public virtual ActionResult Action(Query aQuery)
+        {
+            Command command = mediator.Send(aQuery);
+
+            return View(command);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public virtual ActionResult Action(Command aCommand)
+        {
+            mediator.Send(aCommand);
+
+            return this.RedirectToFeatureJson&lt;Index.UiController&gt;();
+        }
+    }
+</code></pre>
+
+<pre><code>
+## User.Create.MappingProfile ##
+</code></pre>
+
+<pre><code>    public class MappingProfile : Profile
+    {
+        protected override void Configure()
+        {
+            CreateMap&lt;Command, User&gt;();
+        }
+    }
+</code></pre>
+
+<pre><code>
+## User\Create.cshtml ##
+</code></pre>
+
+<p>@using JimmyMvc.Features.User
+@model Create.Command</p>
+
+<p>@{
+  ViewBag.Title = &ldquo;Create&rdquo;;
+}</p>
+
+<h2>Create</h2>
+
+
+<p>@using (Html.BeginForm())
+{
+@Html.AntiForgeryToken()</p>
+
+<div class="form-horizontal">
+    <h4>User</h4>
+    <hr />
+    @Html.ValidationDiv()
+    @Html.FormBlock(aCommand => aCommand.LastName)
+    @Html.FormBlock(aCommand => aCommand.FirstAndMiddleName)
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+
+
+<p>}</p>
+
+<div>
+    @(Html.FeatureLink<Index.UiController>(aLinkText: "Back to List"))
+</div>
+
+
+<p>@section Scripts {
+    @Scripts.Render(paths: &ldquo;~/bundles/jqueryval&rdquo;)
+}</p>
+
+<pre><code>
+
+## User\Index.cshtml ##
+In the Index.cshtml file update the create link to the following
+
+`@(Html.FeatureLink&lt;Create.UiController&gt;(aLinkText: "Create New"))`
+
+Compile, run and test.
+
+# Feature User/Delete #
+We are going to implement this asynchronously.
+Create the `Delete` class in the `User` folder. 
+
+## User.Delete.Query ##
+</code></pre>
+
+<pre><code>    public class Query : IAsyncRequest&lt;Command&gt;
+    {
+        public int UserId { get; set; }
+    }
+</code></pre>
+
+<pre><code>## User.Delete.QueryHandler ##
+</code></pre>
+
+<pre><code>    public class QueryHandler : IAsyncRequestHandler&lt;Query, Command&gt;
+    {
+        private IDbContextScopeFactory DbContextScopeFactory { get; }
+
+        public QueryHandler(IDbContextScopeFactory aDbContextScopeFactory)
+        {
+            DbContextScopeFactory = aDbContextScopeFactory;
+        }
+        public async Task&lt;Command&gt; Handle(Query aQuery)
+        {
+            using (var dbContextScope = DbContextScopeFactory.CreateReadOnly())
+            {
+                Model model = dbContextScope.DbContexts.Get&lt;Model&gt;();
+
+                return await model.Users.Where(aUser =&gt; aUser.UserId == aQuery.UserId).ProjectToSingleOrDefaultAsync&lt;Command&gt;();
+            }
+        }
+    }
+</code></pre>
+
+<pre><code>## User.Delete.Command ##
+</code></pre>
+
+<pre><code>    public class Command : IAsyncRequest
+    {
+        public int UserId { get; set; }
+        [Display(Name = "First Name")]
+        public string FirstAndMiddleName { get; set; }
+        public string LastName { get; set; }
+    }
+</code></pre>
+
+<pre><code>## User.Delete.CommandHandler ##
+</code></pre>
+
+<pre><code>    public class CommandHandler : AsyncRequestHandler&lt;Command&gt;
+    {
+        private IDbContextScopeFactory DbContextScopeFactory { get; }
+
+        public CommandHandler(IDbContextScopeFactory aDbContextScopeFactory)
+        {
+            DbContextScopeFactory = aDbContextScopeFactory;
+        }
+
+        protected override async Task HandleCore(Command aCommand)
+        {
+            using (var dbContextScope = DbContextScopeFactory.Create())
+            {
+                Model model = dbContextScope.DbContexts.Get&lt;Model&gt;();
+                User user = await model.Users.FindAsync(aCommand.UserId);
+
+                model.Users.Remove(user);
+                await dbContextScope.SaveChangesAsync();
+            }
+        }
+    }
+</code></pre>
+
+<pre><code>## User.Delete.UiController ##
+</code></pre>
+
+<pre><code>    public class UiController : Controller
+    {
+        private readonly IMediator mediator;
+
+        public UiController(IMediator aMediator)
+        {
+            mediator = aMediator;
+        }
+
+        public virtual async Task&lt;ActionResult&gt; Action(Query aQuery)
+        {
+            Command command = await mediator.SendAsync(aQuery);
+
+            return View(command);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public virtual async Task&lt;ActionResult&gt; Action(Command aCommand)
+        {
+            await mediator.SendAsync(aCommand);
+
+            return this.RedirectToFeatureJson&lt;Index.UiController&gt;();
+        }
+    }
+</code></pre>
+
+<pre><code>
+## User.Delete.MappingProfile ##
+</code></pre>
+
+<pre><code>    public class MappingProfile : Profile
+    {
+        protected override void Configure()
+        {
+            CreateMap&lt;User, Command&gt;().ReverseMap();
+        }
+    }
+</code></pre>
+
+<pre><code>
+## Delete.cshtml ##
+</code></pre>
+
+<p>@using JimmyMvc.Features.User
+@model Delete.Command</p>
+
+<p>@{
+  ViewBag.Title = &ldquo;Delete&rdquo;;
+}</p>
+
+<h2>Delete</h2>
+
+
+<p class="error">@ViewBag.ErrorMessage</p>
+
+
+<h3>Are you sure you want to delete this?</h3>
+
+
+<div>
+    <h4>User</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayLabel(aModel => aModel.LastName)
+        </dt>
+
+        <dd>
+            @Html.Display(aModel => aModel.LastName)
+        </dd>
+
+        <dt>
+            @Html.Display(aModel => aModel.FirstAndMiddleName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(aModel => aModel.FirstAndMiddleName)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+    @Html.AntiForgeryToken()
+    @Html.Input(aModel => aModel.UserId)
+
+    <div class="form-actions no-color">
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        @(Html.FeatureLink<Index.UiController>(aLinkText: "Back to List"))
+    </div>
+    }
+</div>
+
+
+<pre><code>## Index.cshtml ##
+Update the Delete link to the following:
+
+`@(Html.FeatureLink&lt;Delete.UiController&gt;(aLinkText: "Delete", aRouteValues: new Delete.Query { UserId = item.UserId }))`
+
+
+Build, run test.
+
+# Mediated Controllers #
+
+Create a folder under Infrastructure named `MediatedControllers`
+
+
+## MediatedController ##
+Reviewing the UiControllers we notice many of them start with
+</code></pre>
+
+<pre><code>    public class UiController : Controller
+    {
+        private readonly IMediator mediator;
+
+        public UiController(IMediator aMediator)
+        {
+            mediator = aMediator;
+        }
+</code></pre>
+
+<pre><code>
+So we can refactor.
+
+Create a `MediatedControllers` Folder under the `Infrastructure` Folder and 
+create a `MediatedController` class in `MediatedControllers` Folder as follows:
+</code></pre>
+
+<p>namespace JimmyMvc.Infrastructure.MediatedControllers
+{
+    using System.Web.Mvc;
+    using MediatR;</p>
+
+<pre><code>public class MediatedController : Controller
+{
+    protected readonly IMediator Mediator;
+
+    public MediatedController(IMediator aMediator)
+    {
+        Mediator = aMediator;
+    }
+}
+</code></pre>
+
+<p>}
+<code>``
+Now we could change all the controllers that require a mediator to inherit from</code>MediatedController<code>instead of</code>Controller`. But hold off as we can refactor these even more DRYly.</p>
+
+<h2>MediatedGetController</h2>
+
+<p>Notice that all of the mediated controllers <code>get</code> operations send the Query to the mediator and then send the result to the View.
+either Sync example</p>
+
+<pre><code class="csharp">
+
+            public virtual ActionResult XXX(Query aQuery)
+            {
+                Command command = mediator.Send(aQuery);
+
+                return View(command);
+            }
+</code></pre>
+
+<p>or Async example</p>
+
+<pre><code class="csharp">
+
+            public virtual async Task&lt;ActionResult&gt; XXX(Query aQuery)
+            {
+                Result result = await mediator.SendAsync(aQuery);
+
+                return View(result);
+
+            }
+</code></pre>
+
+<p>First we are going to create a generic controller that&rsquo;s action synchronously handles the http <code>Get</code> given a <code>Query</code> and returning a <code>Result</code> as follows:</p>
+
+<p>Create <code>MediatedGetController</code> class in the <code>MediatedControllers</code> folder.</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.MediatedControllers
+{
+    using System.Web.Mvc;
+    using MediatR;
+
+    public class MediatedGetController&lt;TQuery, TResult&gt; : MediatedController
+    where TQuery : IRequest&lt;TResult&gt;
+    {
+        public MediatedGetController(IMediator aMediator) : base(aMediator) { }
+
+        public virtual ActionResult Action(TQuery aQuery)
+        {
+            TResult result = Mediator.Send(aQuery);
+
+            if (result == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(result);
+        }
+    }
+}
+</code></pre>
+
+<h2>MediatedAsyncGetController</h2>
+
+<p>Now we will do the same for the async.</p>
+
+<p>Create <code>MediatedAsyncGetController</code> class in the <code>MediatedControllers</code> folder.</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.MediatedControllers
+{
+    using System.Threading.Tasks;
+    using System.Web.Mvc;
+    using MediatR;
+
+    public class MediatedAsyncGetController&lt;TQuery, TResult&gt; : MediatedController
+    where TQuery : IAsyncRequest&lt;TResult&gt;
+    {
+        public MediatedAsyncGetController(IMediator aMediator) : base(aMediator) { }
+
+        public virtual async Task&lt;ActionResult&gt; Action(TQuery aQuery)
+        {
+            TResult result = await Mediator.SendAsync(aQuery);
+
+            if (result == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(result);
+        }
+    }
+}
+</code></pre>
+
+<h2>MediatedGetPostController</h2>
+
+<p>Looking at the controllers that handle the post we notice that they also handle the get as above. So we can inherit that portion. The post Action takes the command which is the result of the query and sends it out via the mediator and then returns a RedirectToActionJson which normally is to an index.
+Again they can do it sync or async.</p>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.MediatedControllers
+{
+    using System;
+    using System.Linq;
+    using System.Web.Mvc;
+    using MediatR;
+    using Extensions;
+
+    public class MediatedGetPostController&lt;TQuery, TCommand, TRedirectController&gt; : MediatedGetController&lt;TQuery, TCommand&gt;
+        where TQuery : IRequest&lt;TCommand&gt;
+        where TCommand : IRequest
+        where TRedirectController : Controller
+  {
+        public MediatedGetPostController(IMediator aMediator) : base(aMediator) { }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public virtual ActionResult Action(TCommand aCommand)
+        {
+            Mediator.Send(aCommand);
+
+            return this.RedirectToFeatureJson&lt;TRedirectController&gt;();
+        }
+    }
+}
+</code></pre>
+
+<h2>MediatedAsyncGetPostController</h2>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.MediatedControllers
+{
+    using System.Threading.Tasks;
+    using System.Web.Mvc;
+    using MediatR;
+    using Extensions;
+
+    public class MediatedAsyncGetPostController&lt;TQuery, TCommand&gt; : MediatedAsyncGetController&lt;TQuery, TCommand&gt;
+        where TQuery : IAsyncRequest&lt;TCommand&gt;
+        where TCommand : IAsyncRequest
+    {
+        public MediatedAsyncGetPostController(IMediator aMediator) : base(aMediator) { }
+
+        public virtual string ActionName { get { return "Index"; } }  // Default redirects to the Index
+        public virtual string ControllerName { get { return ""; } } // Default is blank and thus the same controller that got here
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public virtual async Task&lt;ActionResult&gt; Action(TCommand aCommand)
+        {
+            await Mediator.SendAsync(aCommand);
+
+            return this.RedirectToActionJson(ActionName, ControllerName);
+        }
+    }
+}
+</code></pre>
+
+<h2>Refactor Controllers</h2>
+
+<p>Now we can go back to each UiController and have them inherit from the appropriate type and thereby reduce the amount of code. Notice if we do not want this default handler we can simply inherit from Controller.</p>
+
+<h3>User.Create.UiController</h3>
+
+<pre><code class="csharp">
+
+        public class UiController : MediatedGetPostController&lt;Query, Command, Index.UiController&gt;
+        {
+            public UiController(IMediator aMediator) : base(aMediator) { }
+        }
+</code></pre>
+
+<h3>User.Delete.UiController</h3>
+
+<pre><code class="csharp">
+
+        public class UiController : MediatedAsyncGetPostController&lt;Query, Command, Index.UiController&gt;
+        {
+            public UiController(IMediator aMediator) : base(aMediator) { }
+        }
+</code></pre>
+
+<h2>User.Details.UiController</h2>
+
+<pre><code class="csharp">
+
+        public class UiController : MediatedAsyncGetController&lt;Query, Result&gt;
+        {
+            public UiController(IMediator aMediator) : base(aMediator) { }
+        }
+</code></pre>
+
+<h2>User.Edit.UiController</h2>
+
+<pre><code class="csharp">
+
+        public class UiController : MediatedAsyncGetPostController&lt;Query, Command, Index.UiController&gt;
+        {
+            public UiController(IMediator aMediator) : base(aMediator) { }
+        }
+</code></pre>
+
+<p>Build, run and test.</p>
+
+<p>More refactoring</p>
+
+<h1>RequestHandlers #</h1>
+
+<p>Notice that the majority of the Handlers use a DbContext.  A single dbcontext per Handler method would normally suffice.  Although there are times that you may want to do parallel processing or even have a separate DbContext. So I want to make the normal single dbcontext easy without limiting options in case we want more control.</p>
+
+<p>Also notice that for Queries we want a read only DbContext and for Commands we want a writeable context.
+To do this we will create specialized default QueryHandlers and CommandHandlers and again support both sync and async.</p>
+
+<h2>DbContextQueryHandler</h2>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.RequestHandlers
+{
+    using MediatR;
+    using Mehdime.Entity;
+    using System;
+    using System.Data.Entity;
+
+    public class DbContextQueryHandler&lt;TQuery, TResponse, TDbContext&gt; : IRequestHandler&lt;TQuery, TResponse&gt;
+        where TQuery : IRequest&lt;TResponse&gt;
+        where TResponse : IRequest
+        where TDbContext : DbContext
+    {       
+        protected IDbContextScopeFactory DbContextScopeFactory { get; }
+
+        public DbContextQueryHandler(IDbContextScopeFactory aDbContextScopeFactory)
+        {
+            DbContextScopeFactory = aDbContextScopeFactory;
+        }
+
+        public TResponse Handle(TQuery aQuery)
+        {
+            using (var dbContextScope = DbContextScopeFactory.CreateReadOnly())
+            {
+                TDbContext dbContext = dbContextScope.DbContexts.Get&lt;TDbContext&gt;();
+                return HandleInScope(aQuery, dbContext);
+            }
+        }
+
+        protected virtual TResponse HandleInScope(TQuery aCommand, TDbContext aDbContext)
+        {
+            throw new NotImplementedException(message: "Override this method in your Handler");
+            return default(TResponse);
+        }
+    }
+}
+</code></pre>
+
+<h2>AsyncDbContextQueryHandler</h2>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.RequestHandlers
+{
+    using System;
+    using MediatR;
+    using Mehdime.Entity;
+    using System.Data.Entity;
+    using System.Threading.Tasks;
+
+        public class AsyncDbContextQueryHandler&lt;TQuery, TResponse, TDbContext&gt; : IAsyncRequestHandler&lt;TQuery, TResponse&gt;
+    where TQuery : IAsyncRequest&lt;TResponse&gt;
+    where TResponse: IAsyncRequest
+    where TDbContext : DbContext
+    {
+        protected IDbContextScopeFactory DbContextScopeFactory { get; }
+
+        public AsyncDbContextQueryHandler(IDbContextScopeFactory aDbContextScopeFactory)
+        {
+            DbContextScopeFactory = aDbContextScopeFactory;
+        }
+
+        public async Task&lt;TResponse&gt; Handle(TQuery aQuery)
+        {
+            using (var dbContextScope = DbContextScopeFactory.CreateReadOnly())
+            {
+                TDbContext dbContext = dbContextScope.DbContexts.Get&lt;TDbContext&gt;();
+
+                return await HandleInScope(aQuery, dbContext);
+            }
+        }
+        protected virtual async Task&lt;TResponse&gt; HandleInScope(TQuery aQuery, TDbContext aDbContext)
+        {
+            await Task.FromException&lt;NotImplementedException&gt;(new NotImplementedException());
+            return default(TResponse);
+        }
+    }
+}
+</code></pre>
+
+<h2>DbContextCommandHandler</h2>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.RequestHandlers
+{
+    using MediatR;
+    using Mehdime.Entity;
+    using System;
+    using System.Data.Entity;
+
+    public class DbContextCommandHandler&lt;TCommand, TDbContext&gt; : RequestHandler&lt;TCommand&gt; 
+        where TCommand : IRequest
+        where TDbContext : DbContext
+    {
+        protected IDbContextScopeFactory DbContextScopeFactory { get; }
+
+        public DbContextCommandHandler(IDbContextScopeFactory aDbContextScopeFactory)
+        {
+            DbContextScopeFactory = aDbContextScopeFactory;
+        }
+
+        protected override void HandleCore(TCommand aCommand)
+        {
+            using (var dbContextScope = DbContextScopeFactory.Create())
+            {
+                TDbContext dbContext = dbContextScope.DbContexts.Get&lt;TDbContext&gt;();
+
+
+                HandleInScope(aCommand, dbContext);
+                dbContextScope.SaveChanges();
+            }
+        }
+
+        protected virtual void HandleInScope(TCommand aCommand, TDbContext aDbContext)
+        {
+            throw new NotImplementedException();
+            return;
+        }
+    }
+}
+</code></pre>
+
+<h2>AsyncDbContextCommandHandler</h2>
+
+<pre><code class="csharp">
+
+namespace JimmyMvc.Infrastructure.RequestHandlers
+{
+    using MediatR;
+    using Mehdime.Entity;
+    using System;
+    using System.Data.Entity;
+    using System.Threading.Tasks;
+    public class AsyncDbContextCommandHandler&lt;TCommand,TDbContext&gt; : AsyncRequestHandler&lt;TCommand&gt;
+    where TCommand : IAsyncRequest
+    where TDbContext : DbContext
+    {
+        protected IDbContextScopeFactory DbContextScopeFactory { get; }
+
+        public AsyncDbContextCommandHandler(IDbContextScopeFactory aDbContextScopeFactory)
+        {
+            DbContextScopeFactory = aDbContextScopeFactory;
+        }
+
+        protected override async Task HandleCore(TCommand message)
+        {
+            using (var dbContextScope = DbContextScopeFactory.Create())
+            {
+                TDbContext dbContext = dbContextScope.DbContexts.Get&lt;TDbContext&gt;();
+
+                await HandleInScope(message, dbContext);
+                await dbContextScope.SaveChangesAsync();
+            }
+        }
+
+        protected virtual async Task HandleInScope(TCommand aCommand, TDbContext aDbContext)
+        {
+            await Task.FromException&lt;NotImplementedException&gt;(new NotImplementedException());
+        }
+    }
+}
+</code></pre>
+
+<p>These will clean up the handlers a little.  So lets go back and refactor them now.</p>
+
+<h2>Create</h2>
+
+<p>The QueryHandler for this doesn&rsquo;t need a dbcontext and is fine as is.</p>
+
+<p>Update the CommandHandler as follows.</p>
+
+<pre><code class="csharp">
+
+        public class CommandHandler : DbContextCommandHandler&lt;Command, Model&gt;
+        {
+            public CommandHandler(IDbContextScopeFactory aDbContextScopeFactory) : base(aDbContextScopeFactory) { }
+
+            protected override void HandleInScope(Command aCommand, Model aModel)
+            {
+                User user = Mapper.Map&lt;Command, User&gt;(aCommand);
+                aModel.Users.Add(user);
+            }
+        }
+</code></pre>
+
+<h2>Delete</h2>
+
+<pre><code>  TODO Does anything go here?
+</code></pre>
+
+<h2>Details</h2>
+
+<p>Update the QueryHandler as follows:</p>
+
+<pre><code class="csharp">
+
+        public class QueryHandler : AsyncDbContextQueryHandler&lt;Query, Command, Model&gt;
+        {
+            public QueryHandler(IDbContextScopeFactory aDbContextScopeFactory) : base(aDbContextScopeFactory) { }
+
+            protected override async Task&lt;Command&gt; HandleInScope(Query aQuery, Model aModel)
+            {
+                return await aModel.Users.Where(aUser =&gt; aUser.UserId == aQuery.UserId).ProjectToSingleOrDefaultAsync&lt;Command&gt;();
+            }
+        }
+</code></pre>
+
+<p>And the CommandHandler as:</p>
+
+<pre><code class="csharp">
+
+        public class ComandHandler : AsyncDbContextCommandHandler&lt;Command, Model&gt;
+        {
+            public ComandHandler(IDbContextScopeFactory aDbContextScopeFactory) : base(aDbContextScopeFactory) { }
+
+            protected override async Task HandleInScope(Command aCommand, Model aModel)
+            {
+                User user = await aModel.Users.FindAsync(aCommand.UserId);
+                aModel.Users.Remove(user);
+            }
+        }
+</code></pre>
+
+<h2>Details</h2>
+
+<p>Update the QueryHandler</p>
+
+<pre><code class="csharp">
+
+        public class QueryHandler : AsyncDbContextQueryHandler&lt;Query, Result, Model&gt;
+        {
+            public QueryHandler(IDbContextScopeFactory aDbContextScopeFactory) : base(aDbContextScopeFactory) { }
+
+            protected override async Task&lt;Result&gt; HandleInScope(Query aQuery, Model aModel)
+            {
+                Result result = await aModel.Users.Where(aUser =&gt; aUser.UserId == aQuery.UserId).ProjectToSingleOrDefaultAsync&lt;Result&gt;();
+
+                result.ApprovalListTemplates = new List&lt;Result.ApprovalListTemplate&gt;();
+                return result;
+            }
+        }
+</code></pre>
+
+<h2>Edit</h2>
+
+<p>Update QueryHandler:</p>
+
+<pre><code class="csharp">
+
+        public class QueryHandler : AsyncDbContextQueryHandler&lt;Query, Command, Model&gt;
+        {
+            public QueryHandler(IDbContextScopeFactory aDbContextScopeFactory) : base(aDbContextScopeFactory) { }
+
+            protected override async Task&lt;Command&gt; HandleInScope(Query aQuery, Model aModel)
+            {
+                return await aModel.Users
+                        .Where(aUser =&gt; aUser.UserId == aQuery.UserId)
+                        .ProjectToSingleOrDefaultAsync&lt;Command&gt;();
+            }
+        }
+</code></pre>
+
+<p>Update CommandHandler:</p>
+
+<pre><code class="csharp">
+
+        public class CommandHandler : AsyncDbContextCommandHandler&lt;Command, Model&gt;
+        {
+            public CommandHandler(IDbContextScopeFactory aDbContextScopeFactory) : base(aDbContextScopeFactory) { }
+
+            protected override async Task HandleInScope(Command aCommand, Model aModel)
+            {
+                User user = await aModel.Users.FindAsync(aCommand.UserId);
+                Mapper.Map(aCommand, user);
+            }
+        }
+</code></pre>
+
+<h2>Index</h2>
+
+<p>Update QueryHandler</p>
+
+<pre><code class="csharp">
+
+        public class QueryHandler : DbContextQueryHandler&lt;Query, Result, Model&gt;
+        {
+            public QueryHandler(IDbContextScopeFactory aDbContextScopeFactory) : base(aDbContextScopeFactory) { }
+
+            protected override  Result HandleInScope(Query aQuery, Model aModel)
+            {
+                var result = new Result
+                {
+                    CurrentSort = aQuery.SortOrder,
+                    NameSortParm = String.IsNullOrEmpty(aQuery.SortOrder) ? "name_desc" : "",
+                };
+
+                if (aQuery.SearchString != null)
+                {
+                    aQuery.Page = 1;
+                }
+                else
+                {
+                    aQuery.SearchString = aQuery.CurrentFilter;
+                }
+
+                result.CurrentFilter = aQuery.SearchString;
+                result.SearchString = aQuery.SearchString;
+
+                IQueryable&lt;User&gt; users = from s in aModel.Users select s;
+                if (!String.IsNullOrEmpty(aQuery.SearchString))
+                {
+                    users = users.Where(aUser =&gt; aUser.LastName.Contains(aQuery.SearchString) || aUser.FirstAndMiddleName.Contains(aQuery.SearchString));
+                }
+                switch (aQuery.SortOrder)
+                {
+                    case "name_desc":
+                        users = users.OrderByDescending(aUser =&gt; aUser.LastName);
+                        break;
+                    default: // Name ascending 
+                        users = users.OrderBy(aUser =&gt; aUser.LastName);
+                        break;
+                }
+
+                int pageSize = 3;
+                int pageNumber = (aQuery.Page ?? 1);
+                result.Users = users.ProjectToPagedList&lt;Result.User&gt;(pageNumber, pageSize);
+
+                return result;
+            }
+        }
+</code></pre>
+
+<p>So now I think you should understand the concept. You can now review the final code on github.</p>
+
+<h1>Tools used in this blog</h1>
+
+<p>Visual Studio 2015
+2015-08-10</p>
+]]></content>
+  </entry>
+  
+</feed>
