@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Hello Github Blog - Cramer on Code</title>
+  <title>Plastic SCM vs Git Rebase - Cramer on Code</title>
   <meta name="author" content="Steven T. Cramer">
 
   
-  <meta name="description" content="Creating a github blog is actually much more trouble than it should be. If you are wanting to blog versus learning Ruby, Jekyll, git and more then &hellip;">
+  <meta name="description" content="Ryan Lanciaux and I were having a conversation about git rebase and I thought I would share the gist of it here. Using Plastic SCM I created the &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://steventcramer.github.io//blog/2015/08/23/hello-github-blog/">
+  <link rel="canonical" href="http://steventcramer.github.io//blog/2015/08/26/plastic-scm-vs-git-rebase/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="Cramer on Code" type="application/atom+xml">
@@ -80,7 +80,7 @@
   
   <header>
     
-      <h1 class="entry-title">Hello Github Blog</h1>
+      <h1 class="entry-title">Plastic SCM vs Git Rebase</h1>
     
     
       <p class="meta">
@@ -89,16 +89,56 @@
 
 
 
-<time class='entry-date' datetime='2015-08-23T13:01:41-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>1:01 pm</span></time>
+<time class='entry-date' datetime='2015-08-26T21:18:26-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>9:18 pm</span></time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Creating a github blog is actually much more trouble than it should be.  If you are wanting to blog versus learning Ruby, Jekyll, git and more then don&#39;t use it.  I am currently using Octopress but would quickly switch if the configuration and deployment were simplified by another option.</p>
+<div class="entry-content"><p><a href="https://github.com/ryanlanciaux">Ryan Lanciaux</a> and I were having a conversation about git rebase and I thought I would share the gist of it here.</p>
 
-<p>https://github.com/jekyll/jekyll/issues/2551</p>
+<p>Using <a href="https://plasticscm.com">Plastic SCM</a> I created the scenario Ryan was explaining. The beauty of Plastic SCM is how few words I need for you to understand the scenario we were discussing</p>
+
+<h2>The Rebase Condition</h2>
+
+<p><img src="/assets/pictures/plastic-rebase/RebaseCondition.png" alt="Rebase Condition"></p>
+
+<!-- more -->
+
+<p>For more infomration on git rebase see Atlassian <a href="https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase">page</a>.</p>
+
+<p>I have been using Plastic SCM for years now as my primary version control system. They have also implemented the git protocol and thus it works great with github, Visual Studio Online and bitbucket.  Or any of the cloud providers that support git repositories. I highly recommend it.</p>
+
+<p>Plastic does NOT do a rebase. Each changeset is considered immutable.  And thus you can NOT change History!  Think of all the mistakes we could rewrite in life if we could change history!  Not to mention our code :).</p>
+
+<p>You have two options.</p>
+
+<h1>Reintegrate main then merge</h1>
+
+<p>Merge main branch down to your feature branch then merge your feature back into the main.  If you are doing conflict free pull requests this would be the best choice.</p>
+
+<h2>Pending Reintegration of main branch in FeatureY</h2>
+
+<p><img src="/assets/pictures/plastic-rebase/PendingReintegration.png" alt="Rebase Condition"></p>
+
+<h2>main branch Reintegrated into Feature Y</h2>
+
+<p><img src="/assets/pictures/plastic-rebase/Reintegrated.png" alt="Rebase Condition"></p>
+
+<h2>Feature Y Merged into main</h2>
+
+<p><img src="/assets/pictures/plastic-rebase/FeatureYMerged.png" alt="Rebase Condition"></p>
+
+<h1>Direct Merge</h1>
+
+<p>Or Simply directly merge to the main branch.</p>
+
+<p><img src="/assets/pictures/plastic-rebase/DirectMerge.png" alt="Rebase Condition"></p>
+
+<p>some of the reasoning for the rebase is to &quot;clean up the history&quot;.  My first though was... &quot;you mean lie about history&quot;. </p>
+
+<p>Using Plastic SCM and it&#39;s awesome GUI (yes it all can be done via command line) Isn&#39;t the <strong>actual</strong> history pretty easy to understand?</p>
 </div>
 
 
@@ -114,7 +154,7 @@
 
 
 
-<time class='entry-date' datetime='2015-08-23T13:01:41-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>23</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>1:01 pm</span></time>
+<time class='entry-date' datetime='2015-08-26T21:18:26-04:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>9:18 pm</span></time>
       
 
 
@@ -122,7 +162,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://steventcramer.github.io//blog/2015/08/23/hello-github-blog/" data-via="StevenTCramer" data-counturl="http://steventcramer.github.io//blog/2015/08/23/hello-github-blog/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://steventcramer.github.io//blog/2015/08/26/plastic-scm-vs-git-rebase/" data-via="StevenTCramer" data-counturl="http://steventcramer.github.io//blog/2015/08/26/plastic-scm-vs-git-rebase/" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -135,8 +175,8 @@
     
     <p class="meta">
       
+        <a class="basic-alignment left" href="/blog/2015/08/23/jimmy-mvc/" title="Previous Post: Building MVC Jimmy Style">&laquo; Building MVC Jimmy Style</a>
       
-        <a class="basic-alignment right" href="/blog/2015/08/23/jimmy-mvc/" title="Next Post: Building MVC Jimmy Style">Building MVC Jimmy Style &raquo;</a>
       
     </p>
   </footer>
@@ -232,8 +272,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://steventcramer.github.io//blog/2015/08/23/hello-github-blog/';
-        var disqus_url = 'http://steventcramer.github.io//blog/2015/08/23/hello-github-blog/';
+        var disqus_identifier = 'http://steventcramer.github.io//blog/2015/08/26/plastic-scm-vs-git-rebase/';
+        var disqus_url = 'http://steventcramer.github.io//blog/2015/08/26/plastic-scm-vs-git-rebase/';
         var disqus_script = 'embed.js';
       
     (function () {

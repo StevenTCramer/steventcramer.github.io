@@ -4,7 +4,7 @@
   <title><![CDATA[Cramer on Code]]></title>
   <link href="http://steventcramer.github.io//atom.xml" rel="self"/>
   <link href="http://steventcramer.github.io//"/>
-  <updated>2015-08-23T15:10:34-04:00</updated>
+  <updated>2015-08-26T22:24:58-04:00</updated>
   <id>http://steventcramer.github.io//</id>
   <author>
     <name><![CDATA[Steven T. Cramer]]></name>
@@ -14,26 +14,74 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Plastic SCM vs Git Rebase]]></title>
+    <link href="http://steventcramer.github.io//blog/2015/08/26/plastic-scm-vs-git-rebase/"/>
+    <updated>2015-08-26T21:18:26-04:00</updated>
+    <id>http://steventcramer.github.io//blog/2015/08/26/plastic-scm-vs-git-rebase</id>
+    <content type="html"><![CDATA[<p><a href="https://github.com/ryanlanciaux">Ryan Lanciaux</a> and I were having a conversation about git rebase and I thought I would share the gist of it here.</p>
+
+<p>Using <a href="https://plasticscm.com">Plastic SCM</a> I created the scenario Ryan was explaining. The beauty of Plastic SCM is how few words I need for you to understand the scenario we were discussing</p>
+
+<h2>The Rebase Condition</h2>
+
+<p><img src="http://steventcramer.github.io//assets/pictures/plastic-rebase/RebaseCondition.png" alt="Rebase Condition"></p>
+
+<!-- more -->
+
+<p>For more infomration on git rebase see Atlassian <a href="https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase">page</a>.</p>
+
+<p>I have been using Plastic SCM for years now as my primary version control system. They have also implemented the git protocol and thus it works great with github, Visual Studio Online and bitbucket.  Or any of the cloud providers that support git repositories. I highly recommend it.</p>
+
+<p>Plastic does NOT do a rebase. Each changeset is considered immutable.  And thus you can NOT change History!  Think of all the mistakes we could rewrite in life if we could change history!  Not to mention our code :).</p>
+
+<p>You have two options.</p>
+
+<h1>Reintegrate main then merge</h1>
+
+<p>Merge main branch down to your feature branch then merge your feature back into the main.  If you are doing conflict free pull requests this would be the best choice.</p>
+
+<h2>Pending Reintegration of main branch in FeatureY</h2>
+
+<p><img src="http://steventcramer.github.io//assets/pictures/plastic-rebase/PendingReintegration.png" alt="Rebase Condition"></p>
+
+<h2>main branch Reintegrated into Feature Y</h2>
+
+<p><img src="http://steventcramer.github.io//assets/pictures/plastic-rebase/Reintegrated.png" alt="Rebase Condition"></p>
+
+<h2>Feature Y Merged into main</h2>
+
+<p><img src="http://steventcramer.github.io//assets/pictures/plastic-rebase/FeatureYMerged.png" alt="Rebase Condition"></p>
+
+<h1>Direct Merge</h1>
+
+<p>Or Simply directly merge to the main branch.</p>
+
+<p><img src="http://steventcramer.github.io//assets/pictures/plastic-rebase/DirectMerge.png" alt="Rebase Condition"></p>
+
+<p>some of the reasoning for the rebase is to &quot;clean up the history&quot;.  My first though was... &quot;you mean lie about history&quot;. </p>
+
+<p>Using Plastic SCM and it&#39;s awesome GUI (yes it all can be done via command line) Isn&#39;t the <strong>actual</strong> history pretty easy to understand?</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Building MVC Jimmy Style]]></title>
     <link href="http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc/"/>
     <updated>2015-08-23T13:13:37-04:00</updated>
     <id>http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc</id>
-    <content type="html"><![CDATA[<p>2015-07-18</p>
+    <content type="html"><![CDATA[<p>This blog is a step by step tutorial that transforms a default MVC 5 application into <a href="https://lostechies.com/jimmybogard/">Jimmy Bogard&#39;s</a> Feature oriented configuration as described in his <a href="https://lostechies.com/jimmybogard/2015/07/02/ndc-talk-on-solid-in-slices-not-layers-video-online/">presentation</a>. His sample project located <a href="https://github.com/jbogard/ContosoUniversity" title="here">here</a> was used to guide the way.  The VSIX package and source code of this presentation are available <a href="http://TBD">here</a>.</p>
 
-<p>This blog is a step by step tutorial that transforms a default MVC 5 application into Jimmy Bogard&rsquo;s Feature oriented configuration as described in his <a href="https://lostechies.com/jimmybogard/2015/07/02/ndc-talk-on-solid-in-slices-not-layers-video-online/">presentation</a>. The sample project he has located <a href="https://github.com/jbogard/ContosoUniversity" title="here">here</a> was used to guide the way.  The VSIX package and source code of this presentation are available <a href="http://TBD">here</a>.</p>
+<!-- more -->
 
 <h1>Background</h1>
 
 <h2>Layers to Features</h2>
 
 <p><strong>From:</strong>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/Layers.png" alt="NewProject" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/Layers.png" alt="NewProject"></p>
 
-<p><strong>To:</strong>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/Features.png" alt="NewProject" /></p>
-
-<!-- more -->
-
+<p><strong>To:</strong> 
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/Features.png" alt="NewProject"></p>
 
 <h2>What is a feature</h2>
 
@@ -47,15 +95,15 @@
 - CommandHandler
 - UiController
 - MappingProfile
-- View</p>
+- View  </p>
 
-<p>A Feature handles the <code>get</code> and or <code>post</code> of an http requests for a single url.<br/>
-Examples: <code>http://localhost/User/Index</code>, <code>http://localhost/User/Create</code>
+<p>A Feature handles the <code>get</code> and or <code>post</code> of an http requests for a single url.<br>
+Examples: <code>http://localhost/User/Index</code>, <code>http://localhost/User/Create</code> 
 It can be synchronous or asynchronous, and can have a redirect to url/Feature upon command success.  Features use the <strong>CQRS light</strong> design pattern.</p>
 
 <h2>CQRS Light</h2>
 
-<p>The CQRS (Command Query Responsibility Segregation) pattern means many different thing to different people.  The full blown CQRS with dual domain models and event sourcing etc. gets a bit overwhelming rather quickly.  &ldquo;<a href="https://lostechies.com/jimmybogard/2015/05/05/cqrs-with-mediatr-and-automapper/">CQRS Light</a>&rdquo; is just the splitting of Features into Queries and Commands.  A single domain model is the starting point and will not be split unless circumstances drive the need, which is unlikely.  There is no event sourcing and most messaging is done in process using MediatR.</p>
+<p>The CQRS (Command Query Responsibility Segregation) pattern means many different thing to different people.  The full blown CQRS with dual domain models and event sourcing etc. gets a bit overwhelming rather quickly.  &quot;<a href="https://lostechies.com/jimmybogard/2015/05/05/cqrs-with-mediatr-and-automapper/">CQRS Light</a>&quot; is just the splitting of Features into Queries and Commands.  A single domain model is the starting point and will not be split unless circumstances drive the need, which is unlikely.  There is no event sourcing and most messaging is done in process using MediatR.</p>
 
 <p>The Http protocol correlates rather well with CQRS Light.</p>
 
@@ -64,37 +112,37 @@ Post = Write = Command</p>
 
 <p>The MediatR Nuget package will be used to implement CQRS light.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MediatR.png" alt="MediatR" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MediatR.png" alt="MediatR"></p>
 
-<p>This should all become clear as we implement. Let&rsquo;s get started.</p>
+<p>This should all become clear as we implement. Let&#39;s get started.</p>
 
 <h1>Tutorial</h1>
 
 <h2>Create Default MVC 5 Application</h2>
 
-<p> Create New Project named JimmyMvc</p>
+<p>Create New Project named JimmyMvc</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/NewProject.png" alt="NewProject" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/NewProject.png" alt="NewProject"></p>
 
-<p>Choose <code>MVC</code> and Press <code>Change Authentication</code> and select &ldquo;No Authentication&rdquo;</p>
+<p>Choose <code>MVC</code> and Press <code>Change Authentication</code> and select &quot;No Authentication&quot; </p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/SelectTemplate.png" alt="NewProject" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/SelectTemplate.png" alt="NewProject"></p>
 
 <p>Deselect <code>Host in the cloud</code></p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/NoAuthentication.png" alt="NewProject" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/NoAuthentication.png" alt="NewProject"></p>
 
 <p>Select Ok to create the project.</p>
 
 <p>Run the app to confirm it works as is.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/ScreenShot.png" alt="NewProject" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/ScreenShot.png" alt="NewProject"></p>
 
-<p>Select <em>Tools->NuGet Package Manager->Package Manager Console</em> and enter:</p>
+<p>Select <em>Tools-&gt;NuGet Package Manager-&gt;Package Manager Console</em> and enter: </p>
 
 <p><code>Update-Package</code></p>
 
-<p>Alternatively Select <em>Tools->NuGet Package Manager->Manage NuGet Packages for Solution</em></p>
+<p>Alternatively Select <em>Tools-&gt;NuGet Package Manager-&gt;Manage NuGet Packages for Solution</em></p>
 
 <p>Upgrade all to the latest stable version.</p>
 
@@ -108,7 +156,7 @@ Post = Write = Command</p>
 
 <p>Rename the <code>Views</code> folder to <code>Features</code></p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/FeatureFolder.png" alt="NewProject" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/FeatureFolder.png" alt="NewProject"></p>
 
 <p>So now if you run the app you will get an error:</p>
 
@@ -133,14 +181,14 @@ Post = Write = Command</p>
 </span><span class='line'>~/Views/Shared/Index.cshtml
 </span><span class='line'>~/Views/Shared/Index.vbhtml
 </span></code></pre></td></tr></table></div></figure>
-
+ 
 
 <p>To fix this we change the view engine to one that looks in the proper location:</p>
 
 <p>Create a new root folder named <code>Infrastructure</code>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/InfrastructureFolder.png" alt="NewProject" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/InfrastructureFolder.png" alt="NewProject"></p>
 
-<p>Inside the Infrastructure folder Create new class named: <code>FeatureRazorViewEngine</code></p>
+<p>Inside the Infrastructure folder Create new class named: <code>FeatureRazorViewEngine</code>  </p>
 
 <p>Implement as follows:</p>
 
@@ -187,7 +235,7 @@ Post = Write = Command</p>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
+  
 
 <p>To use the new ViewEngine, update the <code>Global.asax.cs</code> as follows:</p>
 
@@ -236,13 +284,11 @@ Post = Write = Command</p>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
+ 
 
 <p>Running the application now should give you :</p>
-
-<pre><code>The layout page "~/Views/Shared/_Layout.cshtml" could not be found at the following path: "~/Views/Shared/_Layout.cshtml".
-</code></pre>
-
+<div class="highlight"><pre><code class="language-text" data-lang="text">The layout page &quot;~/Views/Shared/_Layout.cshtml&quot; could not be found at the following path: &quot;~/Views/Shared/_Layout.cshtml&quot;.
+</code></pre></div>
 <p>To fix this, Update the <code>_ViewStart.cshtml</code> to point to the Feature based site Layout location.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -252,15 +298,15 @@ Post = Write = Command</p>
 </span><span class='line'>    <span class="n">Layout</span> <span class="p">=</span> <span class="s">&quot;~/Features/Shared/_Layout.cshtml&quot;</span><span class="p">;</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
+ 
 
-
-<p>You application will now function using the &ldquo;Feature&rdquo; folder instead of the &ldquo;View&rdquo; folder.</p>
+<p>You application will now function using the &quot;Feature&quot; folder instead of the &quot;View&quot; folder.</p>
 
 <h2>Removing the Controllers Folder</h2>
 
 <p>Move <code>HomeController.cs</code> to the <code>Features\Home</code> directory and delete the Controllers folder.</p>
 
-<p>Using the feature concept we no longer have to indicate the purpose of the controller by calling it &lt;<em>Home</em>>Controller.  Given it is in the <em>Home</em> namespace the prefix becomes redundant.</p>
+<p>Using the feature concept we no longer have to indicate the purpose of the controller by calling it &lt;<em>Home</em>&gt;Controller.  Given it is in the <em>Home</em> namespace the prefix becomes redundant.</p>
 
 <p>Rename <code>HomeController.cs</code> to <code>UiController.cs</code> and the class name to <code>UiController</code></p>
 
@@ -269,13 +315,11 @@ Post = Write = Command</p>
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="k">namespace</span> <span class="nn">JimmyMvc.Features.Home</span>
 </span></code></pre></td></tr></table></div></figure>
-
+ 
 
 <p>Running the application will now give an error:</p>
-
-<pre><code>The resource cannot be found.
-</code></pre>
-
+<div class="highlight"><pre><code class="language-text" data-lang="text">The resource cannot be found.
+</code></pre></div>
 <p>The url format is set in the <code>RouteConfig</code> as follows: (<em>Notice this is the default and is not changed.</em>)</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -287,7 +331,6 @@ Post = Write = Command</p>
 </span><span class='line'>              <span class="n">url</span><span class="p">:</span> <span class="s">&quot;{controller}/{action}/{id}&quot;</span><span class="p">,</span>
 </span><span class='line'>              <span class="n">defaults</span><span class="p">:</span> <span class="k">new</span> <span class="p">{</span> <span class="n">controller</span> <span class="p">=</span> <span class="s">&quot;Home&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="p">=</span> <span class="s">&quot;Index&quot;</span><span class="p">,</span> <span class="n">id</span> <span class="p">=</span> <span class="n">UrlParameter</span><span class="p">.</span><span class="n">Optional</span> <span class="p">});</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <p>MVC controllers are created using the <code>DefaultControllerFactory.CreateController</code> and it uses a naming convention of <code>&lt;controllerName&gt;Controller</code> to get the controller type.  This will no longer work with our new feature based naming convention.</p>
 
@@ -333,13 +376,11 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>To use this controller factory set it directly in the <code>Global.asax.cs</code> file using:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ControllerBuilder</span><span class="p">.</span><span class="n">Current</span><span class="p">.</span><span class="n">SetControllerFactory</span><span class="p">(</span><span class="k">new</span> <span class="n">JimmyMvc</span><span class="p">.</span><span class="n">Infrastructure</span><span class="p">.</span><span class="n">ControllerFactory</span><span class="p">());</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <p>Later after we add an IoC container this will need to be removed.</p>
 
@@ -397,7 +438,6 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>The Application should now run.  But what is the purpose of this application?</p>
 
 <h2>The Business Case</h2>
@@ -406,21 +446,21 @@ Post = Write = Command</p>
 
 <p>Typically the team that is closest to the project, needs to approve first.  If all of them approve then the next group will be notified and requested to approve or reject.  This second group is often a set of managers involved in a project.  Finally the next group, potentially senior executives are involved. Lastly one person must have the financial signing authority to release the funds.</p>
 
-<p>This blog only covers the implementation of &ldquo;Approval List <strong>Templates</strong>&rdquo; which can be reused when the user actually wants to request approval of a purchase order. The process of requesting approval of the purchase order is another business component and is not covered in this post.</p>
+<p>This blog only covers the implementation of &quot;Approval List <strong>Templates</strong>&quot; which can be reused when the user actually wants to request approval of a purchase order. The process of requesting approval of the purchase order is another business component and is not covered in this post.</p>
 
-<p>Sample &ldquo;Approval List Template&rdquo; names are &hellip; &ldquo;Minimal Approval&rdquo;, &ldquo;Medium Approval&rdquo;, &ldquo;The Big Dogs&rdquo;</p>
+<p>Sample &quot;Approval List Template&quot; names are ... &quot;Minimal Approval&quot;, &quot;Medium Approval&quot;, &quot;The Big Dogs&quot;</p>
 
 <h3>Class Diagram</h3>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/Main.png" alt="Model" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/Main.png" alt="Model"></p>
 
 <p>Granted this model is pretty simple in that the behavior is just CRUD. The use of the ApprovalListTemplate will have more domain behavior and possibly could be the topic of a future blog.</p>
 
 <h3>Use Case</h3>
 
-<p>Let&rsquo;s get started with our first use case.</p>
+<p>Let&#39;s get started with our first use case. </p>
 
-<p>As an administrator we need to be able to maintain a set of users for the application.</p>
+<p>As an administrator we need to be able to maintain a set of users for the application.  </p>
 
 <p>TODO Use case Diagram here</p>
 
@@ -429,17 +469,17 @@ Post = Write = Command</p>
 <h3>Add Entity Framework 6</h3>
 
 <p>Create a root folder named <code>Entities</code> and select it.
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/EntitiesFolder.png" alt="Model" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/EntitiesFolder.png" alt="Model"></p>
 
 <p>Press Ctrl-Shift-A To add a new item.</p>
 
-<p>Select Visual C#->Data-> ADO.NET Entity Data Model And Name it &ldquo;Model&rdquo;</p>
+<p>Select Visual C#-&gt;Data-&gt; ADO.NET Entity Data Model And Name it &quot;Model&quot; </p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/AddEntity.png" alt="Model" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/AddEntity.png" alt="Model"></p>
 
 <p>Select Empty Code First model and then Finish</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/EmptyCodeFirst.png" alt="Model" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/EmptyCodeFirst.png" alt="Model"></p>
 
 <p>This will add the Entity Framework Nuget package to your project and Create a <code>Model.cs</code> file and update your <code>Web.config</code></p>
 
@@ -448,7 +488,7 @@ Post = Write = Command</p>
 <h3>DelegateDecompiler.EntityFramework</h3>
 
 <p>Install <a href="https://www.nuget.org/packages/DelegateDecompiler.EntityFramework/0.16.0" title="Nuget">Nuget DelegateDecompiler.EntityFramework</a> See the <a href="https://github.com/hazzik/DelegateDecompiler" title="Delegate Decompile">github</a> page.
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/DelegateDecompilerNuget.png" alt="Model" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/DelegateDecompilerNuget.png" alt="Model"></p>
 
 <p>This will give you the <code>Computed</code> attribute and improved linq operations with it.</p>
 
@@ -507,7 +547,6 @@ Post = Write = Command</p>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <p>Compile. To Ensure the application builds.</p>
 
@@ -579,7 +618,6 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>Create Database Initializer</h2>
 
 <p>Add a new class named <code>ModelInitializer</code> to the <code>Entities</code> Folder as follows:</p>
@@ -640,7 +678,6 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>Tell Entity Framework to use your initializer class by adding the following to the <code>Global.asax.cs</code> file as shown and the proper using statments:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -649,8 +686,7 @@ Post = Write = Command</p>
 </span><span class='line'>  <span class="n">Database</span><span class="p">.</span><span class="n">SetInitializer</span><span class="p">&lt;</span><span class="n">Model</span><span class="p">&gt;(</span><span class="k">new</span> <span class="n">ModelInitializer</span><span class="p">());</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
-<p>The intializer will execute on first use.  If you want the initializer to execute immediately add the following code in the <code>Global.asax.cs</code> following the above.</p>
+<p>The intializer will execute on first use.  If you want the initializer to execute immediately add the following code in the <code>Global.asax.cs</code> following the above. </p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -661,7 +697,6 @@ Post = Write = Command</p>
 </span><span class='line'>      <span class="n">model</span><span class="p">.</span><span class="n">Database</span><span class="p">.</span><span class="n">Initialize</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
 </span><span class='line'>  <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <p><code>Global.asax.cs</code> should now be as follows:</p>
 
@@ -737,14 +772,13 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>Execute the application now.  And the database should be created and populated with data.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/DatabaseCreated.png" alt="Database Created" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/DatabaseCreated.png" alt="Database Created"></p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/UserData.png" alt="Database Created" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/UserData.png" alt="Database Created"></p>
 
-<p>Lets get started implementing our first Feature and building the infrastructure needed to support it.</p>
+<p>Lets get started implementing our first Feature and building the infrastructure needed to support it.   </p>
 
 <h2>Feature 1: Display the list of users ##</h2>
 
@@ -752,13 +786,13 @@ Post = Write = Command</p>
 
 <p>We will store all of the Features in the Features folder organized by the Entity/Aggregate root of which they are associated. So add a <code>User</code> folder under the Features folder.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/UserFolder.png" alt="Database Created" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/UserFolder.png" alt="Database Created"></p>
 
 <p>Add a class named <code>Index</code> to the <code>User</code> folder.  This will contain the Features logic.</p>
 
-<p>Add an <code>Index</code> view by right clicking on the <code>User</code> folder and selecting <code>Add-&gt;MVC 5 View Page (Razor)</code></p>
+<p>Add an <code>Index</code> view by right clicking on the <code>User</code> folder and selecting <code>Add-&gt;MVC 5 View Page (Razor)</code> </p>
 
-<p>Nest the <code>Index.cshtml</code> file under the <code>Index.cs</code> file to keep the solution organized, using the <a href="https://visualstudiogallery.msdn.microsoft.com/3ebde8fb-26d8-4374-a0eb-1e4e2665070c">File Nesting</a> add-in.</p>
+<p>Nest the <code>Index.cshtml</code> file under the <code>Index.cs</code> file to keep the solution organized, using the <a href="https://visualstudiogallery.msdn.microsoft.com/3ebde8fb-26d8-4374-a0eb-1e4e2665070c">File Nesting</a> add-in. </p>
 
 <p>Replace the default <code>index.cshtml</code> code with the following temporary code which is just used so we can see something when the view renders. We will update this later.</p>
 
@@ -770,7 +804,6 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">&lt;/</span><span class="n">div</span><span class="p">&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>Add a link to the main menu in the <code>Features\Shared\_Layout.cshtml</code> to the Users page.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -781,12 +814,11 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">...</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>Now add a controller to the Feature.</p>
 
-<p>Nested inside the Index class add a controller.</p>
+<p>Nested inside the Index class add a controller.  </p>
 
-<p>Given that each feature now represents a single url the name of the controller method no longer needs to correspond to the url as there can only be one method for <code>get</code> and one for <code>post</code> on each controller.  So we will name all of our methods &ldquo;Action&rdquo; and thus give us the opportunity to be more DRY.  A controller class now can represent a single url.  We will use this knowledge later when we create a <code>LinkBuilder</code> class.</p>
+<p>Given that each feature now represents a single url the name of the controller method no longer needs to correspond to the url as there can only be one method for <code>get</code> and one for <code>post</code> on each controller.  So we will name all of our methods &quot;Action&quot; and thus give us the opportunity to be more DRY.  A controller class now can represent a single url.  We will use this knowledge later when we create a <code>LinkBuilder</code> class.</p>
 
 <p>Your <code>User\Index.cs</code> file should be as follows:</p>
 
@@ -822,14 +854,13 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
+<p>Execute the app and attempt to navigate to the Users page. <img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/UsersLink.png" alt="Users page"></p>
 
-<p>Execute the app and attempt to navigate to the Users page. <img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/UsersLink.png" alt="Users page" /></p>
+<p>You will get <code>The resource cannot be found.</code> error. This is because the controller can not be found using our Controller Factory.  The current factory is looking for a controller of type &quot;JimmyMvc.Features.User.UiController&quot; and an method named &quot;Index&quot;.</p>
 
-<p>You will get <code>The resource cannot be found.</code> error. This is because the controller can not be found using our Controller Factory.  The current factory is looking for a controller of type &ldquo;JimmyMvc.Features.User.UiController&rdquo; and an method named &ldquo;Index&rdquo;.</p>
+<p>Our controllers fully qualified name is &quot;JimmyMvc.Features.User.Index+UiController&quot; because we have embedded it inside the feature.  So we either have to change the factory, or not embed the controller.  Having done this both ways I chose to embed the controller as this allows for a more <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a> solution.  Also the method we are looking for is always named <code>Action</code> we will address this also in the controller factory.</p>
 
-<p>Our controllers fully qualified name is &ldquo;JimmyMvc.Features.User.Index+UiController&rdquo; because we have embedded it inside the feature.  So we either have to change the factory, or not embed the controller.  Having done this both ways I chose to embed the controller as this allows for a more <a href="https://en.wikipedia.org/wiki/Don%27t_repeat_yourself">DRY</a> solution.  Also the method we are looking for is always named <code>Action</code> we will address this also in the controller factory.</p>
-
-<p>So let&rsquo;s update the factory.</p>
+<p>So let&#39;s update the factory.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -923,16 +954,15 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
+<p>Executing the application and navigating to the home url (Home/Index) will now give &quot;The resource cannot be found.&quot; but when you manually enter /User/Index you should see the view page.</p>
 
-<p>Executing the application and navigating to the home url (Home/Index) will now give &ldquo;The resource cannot be found.&rdquo; but when you manually enter /User/Index you should see the view page.</p>
-
-<p>So let&rsquo;s fix the <code>Home/About</code>, <code>Home/Contact</code>, <code>Home/Index</code> Features</p>
+<p>So let&#39;s fix the <code>Home/About</code>, <code>Home/Contact</code>, <code>Home/Index</code> Features </p>
 
 <p>under <code>Features\Home</code> Create classes named <code>About</code>, <code>Contact</code> and <code>Index</code>.</p>
 
 <p>Take the existing controller and split it up among the respective classes.</p>
 
-<p>The Existing Controller:</p>
+<p>The Existing Controller: </p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -992,8 +1022,7 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
-<p>Split and change the method names to &ldquo;Action&rdquo;</p>
+<p>Split and change the method names to &quot;Action&quot;</p>
 
 <p>Index.cs:</p>
 
@@ -1028,7 +1057,6 @@ Post = Write = Command</p>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <p>About.cs</p>
 
@@ -1070,7 +1098,6 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>Contact.cs</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -1109,10 +1136,9 @@ Post = Write = Command</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>now delete the <code>Home\UiController.cs</code> file and nest all the cshtml files under there respective .cs files.</p>
 
-<p>At this point, the site should function and all the pages should work as well.  This gives one a basic idea of the concept but much more is needed for your typical business application.</p>
+<p>At this point, the site should function and all the pages should work as well.  This gives one a basic idea of the concept but much more is needed for your typical business application.   </p>
 
 <p>The <code>User/Index</code> Feature needs to display the list of users vs the current temporary page.</p>
 
@@ -1159,41 +1185,40 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h4>FluentValidation.MVC5</h4>
 
 <p><a href="http://github.com/JeremySkinner/FluentValidation">FluentValidation.MVC5</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/FluentValidation.MVC5Nuget.png" alt="FluentValidation.MVC5 Nuget" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/FluentValidation.MVC5Nuget.png" alt="FluentValidation.MVC5 Nuget"></p>
 
 <h4>lodash</h4>
 
 <p><a href="https://lodash.com/">lodash</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/lodashNuget.png" alt="lodash Nuget" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/lodashNuget.png" alt="lodash Nuget"></p>
 
 <p>this will add the loadash.js file to the <code>Scripts</code> directory.</p>
 
 <h4>Modernizr</h4>
 
 <p><a href="http://modernizr.com/">Modernizr</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/ModernizrNuget.png" alt="Modernizr Nuget" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/ModernizrNuget.png" alt="Modernizr Nuget"></p>
 
 <h4>Microsoft ASP.NET MVC Futures</h4>
 
 <p><a href="https://www.nuget.org/packages/Microsoft.AspNet.Mvc.Futures/">Microsoft ASP.NET MVC Futures 5.1.0-rc1</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MicrosoftAspNetMvcFuturesNuget.png" alt="FluentValidation.MVC5 Nuget" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MicrosoftAspNetMvcFuturesNuget.png" alt="FluentValidation.MVC5 Nuget"></p>
 
 <p>Check for updates on all nuget packages.  Do not include pre-release versions unless stated.  Build Run and confirm the site works.</p>
 
 <h3>StructureMap.MVC5</h3>
 
-<p>StructureMap is used as the Ioc container in this template.  It could be replaced with Unity or Ninject (samples to come later&hellip; maybe)</p>
+<p>StructureMap is used as the Ioc container in this template.  It could be replaced with Unity or Ninject (samples to come later... maybe)</p>
 
 <p><a href="https://www.nuget.org/packages/StructureMap.MVC5/3.1.1.134">StructureMap.MVC5</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/StructureMap.MVC5Nuget.png" alt="StructureMap.MVC5" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/StructureMap.MVC5Nuget.png" alt="StructureMap.MVC5"></p>
 
 <p>This adds 4 dependent packages and also adds the files displayed below.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/StructureMap.MVC5Files.png" alt="StructureMap.MVC5" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/StructureMap.MVC5Files.png" alt="StructureMap.MVC5"></p>
 
 <p>Now run <code>Update-Package</code> to update to the latest version of the dependent packages.</p>
 
@@ -1203,16 +1228,15 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 
 <p>Now that we have a container we no longer need the explicit setting of the controller factory in <code>Global.asax.cs</code> file</p>
 
-<p>So remove the line</p>
+<p>So remove the line </p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'><span class="n">ControllerBuilder</span><span class="p">.</span><span class="n">Current</span><span class="p">.</span><span class="n">SetControllerFactory</span><span class="p">(</span><span class="k">new</span> <span class="n">JimmyMvc</span><span class="p">.</span><span class="n">Infrastructure</span><span class="p">.</span><span class="n">ControllerFactory</span><span class="p">());</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>The app should now function again.</p>
 
-<p>Note that a nuget called <a href="https://github.com/davidebbo/WebActivator">WebActivatorEx</a> was a dependency and was also installed. &ldquo;WebActivator is a NuGet package that allows other packages to easily bring in Startup and Shutdown code into a web application. This gives a much cleaner solution than having to modify global.asax with the startup logic from many packages&rdquo;</p>
+<p>Note that a nuget called <a href="https://github.com/davidebbo/WebActivator">WebActivatorEx</a> was a dependency and was also installed. &quot;WebActivator is a NuGet package that allows other packages to easily bring in Startup and Shutdown code into a web application. This gives a much cleaner solution than having to modify global.asax with the startup logic from many packages&quot;</p>
 
 <p>Thus the StructuremapMVC.cs file has a Start method that will execute when the site starts up.</p>
 
@@ -1336,20 +1360,19 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>This will automatically look for Registries that we will create as we proceed.   We will use the Validation logic later.</p>
 
 <h3>PagedList.MVC</h3>
 
 <p><a href="https://www.nuget.org/packages/PagedList.Mvc/4.5.0">PagedList.MVC</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/PagedListMvcNuget.png" alt="PagedListMvcNuget" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/PagedListMvcNuget.png" alt="PagedListMvcNuget"></p>
 
 <p>This will also add a PagedList.css file to your project.</p>
 
 <h3>Automapper.EF6</h3>
 
 <p><a href="https://www.nuget.org/packages/AutoMapper.EF6/">Automapper.EF6</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/AutoMapper.EF6Nuget.png" alt="AutoMapper.EF6Nuget" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/AutoMapper.EF6Nuget.png" alt="AutoMapper.EF6Nuget"></p>
 
 <p>Again run <code>Update-Package</code></p>
 
@@ -1359,7 +1382,7 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 
 <p>Create the <code>Mapping</code> folder under the Infrastructure folder</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MappingFolder.png" alt="MediatRNuget" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MappingFolder.png" alt="MediatRNuget"></p>
 
 <p>Create <code>MapperExtensions.cs</code> in the <code>Mapping</code> folder as follows:</p>
 
@@ -1433,7 +1456,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h4>AutoMapperRegistry</h4>
 
 <p>We need to register the mappings with the Ioc Container.</p>
@@ -1477,7 +1499,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h3>AutoMapperBootstrap</h3>
 
@@ -1575,10 +1596,9 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h3>StructuremapMvc</h3>
 
-<p>Make sure AutomapperBootstrapper is intialized by updating the <code>App_Start/StructureMapMvc.cs</code> Start method to:</p>
+<p>Make sure AutomapperBootstrapper is intialized by updating the <code>App_Start/StructureMapMvc.cs</code> Start method to: </p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -1596,24 +1616,21 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>      <span class="n">DynamicModuleUtility</span><span class="p">.</span><span class="n">RegisterModule</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">StructureMapScopeModule</span><span class="p">));</span>
 </span><span class='line'>      <span class="n">AutoMapperBootstrapper</span><span class="p">.</span><span class="n">Initialize</span><span class="p">(</span><span class="n">StructureMapDependencyScope</span><span class="p">.</span><span class="n">Container</span><span class="p">);</span>
 </span><span class='line'>  <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+</span></code></pre></td></tr></table></div></figure> 
 
-
-<p></p>
-
-<p>add</p>
+<p>add </p>
 
 <p><code>using Infrastructure.Mapping;</code></p>
 
 <h3>MediatR</h3>
 
 <p><a href="https://www.nuget.org/packages/MediatR">MediatR</a> This blog we use the 2.0.2 version
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MediatRNuget.png" alt="MediatRNuget" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/MediatRNuget.png" alt="MediatRNuget"></p>
 
 <h3>HtmlTags Nuget</h3>
 
 <p><a href="https://www.nuget.org/packages/HtmlTags/">HtmlTags</a>
-<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/HtmlTagsNuget.png" alt="HtmlTags" /></p>
+<img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/HtmlTagsNuget.png" alt="HtmlTags"></p>
 
 <p>If you would like to learn and understand the benefits of HtmlTags read this excellent <a href="http://lostechies.com/jimmybogard/2013/07/18/conventional-html-in-asp-net-mvc-a-primer/">series of articles on LosTechies.com</a></p>
 
@@ -1621,7 +1638,7 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 
 <p>Add the Tags folder under Infrastructure.</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/TagsFolder.png" alt="HtmlTags" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/TagsFolder.png" alt="HtmlTags"></p>
 
 <h4>HtmlTagExtensions</h4>
 
@@ -1674,7 +1691,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h3>EnumDropDownModifier</h3>
 
@@ -1748,7 +1764,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h3>DefaultDisplayLabelBuilder</h3>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -1821,10 +1836,9 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h3>DefaultAspNetMvcHtmlConventions</h3>
 
-<p>This will set up our Default html conventions.</p>
+<p>This will set up our Default html conventions. </p>
 
 <p>In the <code>Tags</code> Folder create the <code>DefaultAspNetMvcHtmlConventions</code> class</p>
 
@@ -2048,7 +2062,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h4>HtmlTagRegistry</h4>
 
 <p>Register these conventions with IoC container</p>
@@ -2093,12 +2106,11 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>Build and confirm app still runs properly.</p>
 
 <h2>User/Index Feature</h2>
 
-<p>The <code>User/Index</code> page will only implement the get/query portion of a feature.  The flow of this is Query->Handler->Result.</p>
+<p>The <code>User/Index</code> page will only implement the get/query portion of a feature.  The flow of this is Query-&gt;Handler-&gt;Result.</p>
 
 <p>The <code>Result</code> is the Model portion of MVC.  The controller directs the incoming query to the Handler and sends the Result/Model to the View.</p>
 
@@ -2123,7 +2135,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>          <span class="k">public</span> <span class="kt">int?</span> <span class="n">Page</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <p>The query will facilitate sorting, paging and filtering of the User list.</p>
 
@@ -2165,10 +2176,9 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h4>User.Index.UiController</h4>
 
-<p>Update UiController.Action to now take the Query as a parameter.  The controller is now a very simple implementation of taking the Query and sending it to the QueryHandler and sending the result to the view.  The mediatR nuget package is made exactly to fill this need and is injected into the controller.</p>
+<p>Update UiController.Action to now take the Query as a parameter.  The controller is now a very simple implementation of taking the Query and sending it to the QueryHandler and sending the result to the view.  The mediatR nuget package is made exactly to fill this need and is injected into the controller. </p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -2203,7 +2213,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>          <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <p>Make sure to include the required using clauses.  Justcode or <code>ctrl.</code> will resolve them for you.</p>
 
@@ -2265,10 +2274,7 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>      <span class="p">}</span>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
+</span></code></pre></td></tr></table></div></figure> 
 
 <h3>User.Index.QueryHandler</h3>
 
@@ -2388,12 +2394,11 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h3>MappingProfile</h3>
 
 <p>Automapper can be used to map between Domain entities and our Queries, Results and Commands. This mapping needs to be defined.</p>
 
-<p>Please add a nested <code>MappingProfile</code> class inside the <code>Index</code> class as follows:</p>
+<p>Please add a nested <code>MappingProfile</code> class inside the <code>Index</code> class as follows: </p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -2411,8 +2416,7 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>    <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
-<p>So now that we have a model to submit to the view, let&rsquo;s update the view.</p>
+<p>So now that we have a model to submit to the view, let&#39;s update the view.</p>
 
 <p>First we will need some Html Helper items</p>
 
@@ -2508,14 +2512,13 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h4>HtmlHelperExtensions.cs</h4>
 
 <p>We will be using some html helper extensions here also that will be shown following.  These use the HtmlTags to generate html.</p>
 
 <p>Create <code>HtmlHelperExtensions</code> class under the Infrastructure folder</p>
 
-<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/HtmlHelperExtensions.png" alt="MediatRNuget" /></p>
+<p><img src="http://steventcramer.github.io//assets/pictures/jimmy-mvc/HtmlHelperExtensions.png" alt="MediatRNuget"></p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -2875,10 +2878,9 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>In <code>Features\Web.config</code> make sure you add</p>
 
-<p><code>&lt;add namespace="JimmyMvc.Infrastructure.Extensions" /&gt;</code></p>
+<p><code>&lt;add namespace=&quot;JimmyMvc.Infrastructure.Extensions&quot; /&gt;</code></p>
 
 <p>in:</p>
 
@@ -2911,7 +2913,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>    <span class="nt">&lt;/pages&gt;</span>
 </span><span class='line'>  <span class="nt">&lt;/system.web.webPages.razor&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <p>This will make the extension available for all views.</p>
 
@@ -2957,12 +2958,11 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>One of the nice things about the extensions are the elimination of magic strings in your cshtml and they give you compile time type checking.</p>
 
 <h3>_Layout.cshtml</h3>
 
-<p> As an example lets update the _Layout.cshtml file replacing the ActionLink that uses magic strings with FeatureLink:</p>
+<p>As an example lets update the _Layout.cshtml file replacing the ActionLink that uses magic strings with FeatureLink:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -3055,7 +3055,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">&lt;/</span><span class="n">body</span><span class="p">&gt;</span>
 </span><span class='line'><span class="p">&lt;/</span><span class="n">html</span><span class="p">&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h3>Index.cshtml</h3>
 
@@ -3173,20 +3172,19 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>      <span class="err">@</span><span class="p">(</span><span class="n">Html</span><span class="p">.</span><span class="n">PagedListPager</span><span class="p">(</span><span class="n">Model</span><span class="p">.</span><span class="n">Users</span><span class="p">,</span> <span class="n">aPage</span> <span class="p">=&gt;</span> <span class="n">Url</span><span class="p">.</span><span class="n">Feature</span><span class="p">&lt;</span><span class="n">Index</span><span class="p">.</span><span class="n">UiController</span><span class="p">&gt;(</span><span class="n">aRouteValues</span><span class="p">:</span> <span class="k">new</span> <span class="n">Index</span><span class="p">.</span><span class="n">Query</span> <span class="p">{</span> <span class="n">Page</span> <span class="p">=</span> <span class="n">aPage</span><span class="p">,</span> <span class="n">SortOrder</span> <span class="p">=</span> <span class="n">Model</span><span class="p">.</span><span class="n">CurrentSort</span><span class="p">,</span> <span class="n">CurrentFilter</span> <span class="p">=</span> <span class="n">Model</span><span class="p">.</span><span class="n">CurrentFilter</span> <span class="p">})))</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>We have commented out our future links since the Create,Edit,Details,Delete Features are yet to be completed.</p>
 
 <p>Build and run and now you should be able to see the Users list with paging. All features currently implemented should now be functional.</p>
 
 <h1>Feature User/Details</h1>
 
-<p>Now we have most of the foundation we need to start cranking out some features.  The details feature is the most similar to the Index feature in that we have a Query, QueryHandler, Result, UiController, Mapping and a View. So will go there next, although this time we are going to use an asynchronous process.</p>
+<p>Now we have most of the foundation we need to start cranking out some features.  The details feature is the most similar to the Index feature in that we have a Query, QueryHandler, Result, UiController, Mapping and a View. So will go there next, although this time we are going to use an asynchronous process. </p>
 
 <p>Create the <code>Details</code> class in the User Directory</p>
 
 <h2>User.Details</h2>
 
-<p>We have a trivial Query object in that we only need the UserId. The result of the query will be the User information and a list of owned ApprovalListTemplates.</p>
+<p>We have a trivial Query object in that we only need the UserId. The result of the query will be the User information and a list of owned ApprovalListTemplates. </p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -3362,12 +3360,11 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>Index.cshtml</h2>
 
 <p>Update the <code>Index.cshtml</code> page to now link to the Details page by uncommenting the FeatureLink.</p>
 
-<p><code>@(Html.FeatureLink&lt;Details.UiController&gt;(aLinkText: "Details", aRouteValues: new Details.Query { UserId = item.UserId })) |</code></p>
+<p><code>@(Html.FeatureLink&lt;Details.UiController&gt;(aLinkText: &quot;Details&quot;, aRouteValues: new Details.Query { UserId = item.UserId })) |</code></p>
 
 <h2>Deatails.cshtml</h2>
 
@@ -3487,7 +3484,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">&lt;/</span><span class="n">p</span><span class="p">&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>Excute and run.</p>
 
 <p>Notice we commented out the Edit link above as we have yet to implment that feature. I would like to do that now. But first we must introduce Validation.</p>
@@ -3511,7 +3507,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>        <span class="k">return</span> <span class="nf">View</span><span class="p">(</span><span class="n">form</span><span class="p">);</span>
 </span><span class='line'>    <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <p>The solution we are going to implement is documented <a href="http://timgthomas.com/2013/09/simplify-client-side-validation-by-adding-a-server/">here</a></p>
 
@@ -3603,7 +3598,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>FilterConfig.cs</h2>
 
 <p>Add the filter by updating the <code>App_Start\FilterConfig.cs</code> file to be as follows:</p>
@@ -3638,7 +3632,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>StructureMapValidatorFactory</h2>
 
 <p>Create the <code>StructureMapValidatorFactory</code> class in the <code>Infrastructure\Validation</code> folder as follows:</p>
@@ -3672,7 +3665,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>AjaxValidation.js</h2>
 
@@ -3850,7 +3842,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">});</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>Update BundleConfig.cs</h2>
 
 <p>Add to the bundle.</p>
@@ -3867,15 +3858,14 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>                                          <span class="s">&quot;~/Scripts/AjaxValidation.js&quot;</span><span class="p">));</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>_Layout.cshtml</h2>
 
-<p>In the head just below <code>@Scripts.Render("~/bundles/modernizr")</code> add the following:
-<code>@Scripts.Render("~/bundles/lodash")</code></p>
+<p>In the head just below <code>@Scripts.Render(&quot;~/bundles/modernizr&quot;)</code> add the following:
+<code>@Scripts.Render(&quot;~/bundles/lodash&quot;)</code></p>
 
 <p>Add the javascript just before the closing body tag, to intercept the form post and convert it to an ajax json call for validation as follows:</p>
 
-<p><code>@Scripts.Render("~/bundles/AjaxValidation")</code></p>
+<p><code>@Scripts.Render(&quot;~/bundles/AjaxValidation&quot;)</code></p>
 
 <h2>DefaultRegistry</h2>
 
@@ -3963,7 +3953,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>ControllerExtensions</h2>
 
 <p>Create class <code>ControllerExtensions</code> in the <code>Infrastructure/Extensions</code> Folder as follows:</p>
@@ -4036,12 +4025,11 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>This completes the Validation infrastrucuture.</p>
 
 <h1>Feature User/Edit</h1>
 
-<p>Create <code>Edit</code> class under the User Folder.</p>
+<p>Create <code>Edit</code> class under the User Folder. </p>
 
 <h2>User.Edit.Query</h2>
 
@@ -4056,7 +4044,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>          <span class="k">public</span> <span class="kt">int?</span> <span class="n">UserId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User.Edit.QueryValidator</h2>
 
@@ -4077,7 +4064,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>          <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User.Edit.QueryHandler</h2>
 
@@ -4125,7 +4111,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>User.Edit.Command</h2>
 
 <p>So the Command object is the result of the Query and would be the model usd in the view. A modified version will be posted back.</p>
@@ -4149,7 +4134,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User.Edit.CommandHandler</h2>
 
@@ -4198,7 +4182,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>          <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User.Edit.UiController</h2>
 
@@ -4256,7 +4239,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>MappingProfile</h2>
 
 <p>Create the Map between a User and the Command  and also the reverse.</p>
@@ -4276,7 +4258,6 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'>          <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User/Edit.cshtml</h2>
 
@@ -4358,41 +4339,39 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>Index.cshtml</h2>
 
 <p>Update the <code>Index.cshtml</code> page to now link to the Edit page</p>
 
 <p>Uncomment the Edit Link as:</p>
 
-<p><code>@(Html.FeatureLink&lt;Edit.UiController&gt;(aLinkText: "Edit", aRouteValues: new Edit.Query { UserId = item.UserId })) |</code></p>
+<p><code>@(Html.FeatureLink&lt;Edit.UiController&gt;(aLinkText: &quot;Edit&quot;, aRouteValues: new Edit.Query { UserId = item.UserId })) |</code></p>
 
 <h2>User/Details.cshtml</h2>
 
 <p>Uncomment the Edit Link on the <code>Details.cshtml</code></p>
 
-<p><code>@(Html.FeatureLink&lt;Edit.UiController&gt;(aLinkText: "Edit", aRouteValues: new Edit.Query { UserId = Model.UserId })) |</code></p>
+<p><code>@(Html.FeatureLink&lt;Edit.UiController&gt;(aLinkText: &quot;Edit&quot;, aRouteValues: new Edit.Query { UserId = Model.UserId })) |</code></p>
 
 <p>Build run and test.</p>
 
 <h1>Feature User/Create</h1>
 
 <p>We are going to implement this synchronously.
-Create the <code>Create.cs</code> class in the <code>User</code> folder.</p>
+Create the <code>Create.cs</code> class in the <code>User</code> folder. </p>
 
 <h2>User.Create.Query</h2>
 
 <p>Create the nested Query class in the Create class as follows:
-This really is an empty class which means simply that their is no information needed but the request will return a Command.</p>
+This really is an empty class which means simply that their is no information needed but the request will return a Command.  </p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'>       <span class="k">public</span> <span class="k">class</span> <span class="nc">Query</span><span class="p">:</span> <span class="n">IRequest</span><span class="p">&lt;</span><span class="n">Command</span><span class="p">&gt;{}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>User.Create.QueryHandler</h2>
 
-<p>This just creates a new command object and returns it.</p>
+<p>This just creates a new command object and returns it. </p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -4409,7 +4388,6 @@ This really is an empty class which means simply that their is no information ne
 </span><span class='line'>          <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User.Create.Command</h2>
 
@@ -4428,7 +4406,6 @@ This really is an empty class which means simply that their is no information ne
 </span><span class='line'>          <span class="k">public</span> <span class="kt">string</span> <span class="n">FirstAndMiddleName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User.Create.CommandValidator</h2>
 
@@ -4449,7 +4426,6 @@ This really is an empty class which means simply that their is no information ne
 </span><span class='line'>          <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User.Create.CommandHandler</h2>
 
@@ -4494,7 +4470,6 @@ This really is an empty class which means simply that their is no information ne
 </span><span class='line'>      <span class="p">}</span>
 </span><span class='line'>  <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User.Create.UiController</h2>
 
@@ -4550,7 +4525,6 @@ This really is an empty class which means simply that their is no information ne
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>User.Create.MappingProfile</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -4568,7 +4542,6 @@ This really is an empty class which means simply that their is no information ne
 </span><span class='line'>          <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User\Create.cshtml</h2>
 
@@ -4646,19 +4619,18 @@ This really is an empty class which means simply that their is no information ne
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>User\Index.cshtml</h2>
 
 <p>In the Index.cshtml file update the create link to the following</p>
 
-<p><code>@(Html.FeatureLink&lt;Create.UiController&gt;(aLinkText: "Create New"))</code></p>
+<p><code>@(Html.FeatureLink&lt;Create.UiController&gt;(aLinkText: &quot;Create New&quot;))</code></p>
 
 <p>Compile, run and test.</p>
 
 <h1>Feature User/Delete</h1>
 
 <p>We are going to implement this asynchronously.
-Create the <code>Delete</code> class in the <code>User</code> folder.</p>
+Create the <code>Delete</code> class in the <code>User</code> folder. </p>
 
 <h2>User.Delete.Query</h2>
 
@@ -4671,7 +4643,6 @@ Create the <code>Delete</code> class in the <code>User</code> folder.</p>
 </span><span class='line'>          <span class="k">public</span> <span class="kt">int</span> <span class="n">UserId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User.Delete.QueryHandler</h2>
 
@@ -4713,7 +4684,6 @@ Create the <code>Delete</code> class in the <code>User</code> folder.</p>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>User.Delete.Command</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -4731,7 +4701,6 @@ Create the <code>Delete</code> class in the <code>User</code> folder.</p>
 </span><span class='line'>          <span class="k">public</span> <span class="kt">string</span> <span class="n">LastName</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User.Delete.CommandHandler</h2>
 
@@ -4778,7 +4747,6 @@ Create the <code>Delete</code> class in the <code>User</code> folder.</p>
 </span><span class='line'>          <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>User.Delete.UiController</h2>
 
@@ -4834,7 +4802,6 @@ Create the <code>Delete</code> class in the <code>User</code> folder.</p>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>User.Delete.MappingProfile</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -4852,7 +4819,6 @@ Create the <code>Delete</code> class in the <code>User</code> folder.</p>
 </span><span class='line'>          <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>Delete.cshtml</h2>
 
@@ -4942,12 +4908,11 @@ Create the <code>Delete</code> class in the <code>User</code> folder.</p>
 </span><span class='line'><span class="p">&lt;/</span><span class="n">div</span><span class="p">&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>Index.cshtml</h2>
 
 <p>Update the Delete link to the following:</p>
 
-<p><code>@(Html.FeatureLink&lt;Delete.UiController&gt;(aLinkText: "Delete", aRouteValues: new Delete.Query { UserId = item.UserId }))</code></p>
+<p><code>@(Html.FeatureLink&lt;Delete.UiController&gt;(aLinkText: &quot;Delete&quot;, aRouteValues: new Delete.Query { UserId = item.UserId }))</code></p>
 
 <p>Build, run test.</p>
 
@@ -4977,10 +4942,9 @@ Create the <code>Delete</code> class in the <code>User</code> folder.</p>
 </span><span class='line'>          <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>So we can refactor.</p>
 
-<p>Create a <code>MediatedControllers</code> Folder under the <code>Infrastructure</code> Folder and
+<p>Create a <code>MediatedControllers</code> Folder under the <code>Infrastructure</code> Folder and 
 create a <code>MediatedController</code> class in <code>MediatedControllers</code> Folder as follows:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -5015,7 +4979,6 @@ create a <code>MediatedController</code> class in <code>MediatedControllers</cod
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>Now we could change all the controllers that require a mediator to inherit from <code>MediatedController</code> instead of <code>Controller</code>. But hold off as we can refactor these even more DRYly.</p>
 
 <h2>MediatedGetController</h2>
@@ -5037,7 +5000,6 @@ either Sync example</p>
 </span><span class='line'>          <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>or Async example</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -5056,8 +5018,7 @@ either Sync example</p>
 </span><span class='line'>          <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
-<p>First we are going to create a generic controller that&rsquo;s action synchronously handles the http <code>Get</code> given a <code>Query</code> and returning a <code>Result</code> as follows:</p>
+<p>First we are going to create a generic controller that&#39;s action synchronously handles the http <code>Get</code> given a <code>Query</code> and returning a <code>Result</code> as follows:</p>
 
 <p>Create <code>MediatedGetController</code> class in the <code>MediatedControllers</code> folder.</p>
 
@@ -5108,7 +5069,6 @@ either Sync example</p>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>MediatedAsyncGetController</h2>
 
@@ -5165,7 +5125,6 @@ either Sync example</p>
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>MediatedGetPostController</h2>
 
@@ -5224,7 +5183,6 @@ Again they can do it sync or async.</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>MediatedAsyncGetPostController</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -5281,7 +5239,6 @@ Again they can do it sync or async.</p>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>Refactor Controllers</h2>
 
 <p>Now we can go back to each UiController and have them inherit from the appropriate type and thereby reduce the amount of code. Notice if we do not want this default handler we can simply inherit from Controller.</p>
@@ -5296,10 +5253,7 @@ Again they can do it sync or async.</p>
 </span><span class='line'>      <span class="p">{</span>
 </span><span class='line'>          <span class="k">public</span> <span class="nf">UiController</span><span class="p">(</span><span class="n">IMediator</span> <span class="n">aMediator</span><span class="p">)</span> <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">aMediator</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
+</span></code></pre></td></tr></table></div></figure> 
 
 <h3>User.Delete.UiController</h3>
 
@@ -5313,7 +5267,6 @@ Again they can do it sync or async.</p>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>User.Details.UiController</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -5326,7 +5279,6 @@ Again they can do it sync or async.</p>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>User.Edit.UiController</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -5338,7 +5290,6 @@ Again they can do it sync or async.</p>
 </span><span class='line'>          <span class="k">public</span> <span class="nf">UiController</span><span class="p">(</span><span class="n">IMediator</span> <span class="n">aMediator</span><span class="p">)</span> <span class="p">:</span> <span class="k">base</span><span class="p">(</span><span class="n">aMediator</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <p>Build, run and test.</p>
 
@@ -5425,7 +5376,6 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>AsyncDbContextQueryHandler</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -5501,7 +5451,6 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 </span><span class='line'>  <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>DbContextCommandHandler</h2>
 
@@ -5581,7 +5530,6 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>AsyncDbContextCommandHandler</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -5656,12 +5604,11 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>These will clean up the handlers a little.  So lets go back and refactor them now.</p>
 
 <h2>Create</h2>
 
-<p>The QueryHandler for this doesn&rsquo;t need a dbcontext and is fine as is.</p>
+<p>The QueryHandler for this doesn&#39;t need a dbcontext and is fine as is.</p>
 
 <p>Update the CommandHandler as follows.</p>
 
@@ -5687,13 +5634,11 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>Delete</h2>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class='csharp'><span class='line'>  <span class="n">TODO</span> <span class="n">Does</span> <span class="n">anything</span> <span class="n">go</span> <span class="n">here</span><span class="p">?</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>Details</h2>
 
@@ -5719,7 +5664,6 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>And the CommandHandler as:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -5743,7 +5687,6 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 </span><span class='line'>          <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>Details</h2>
 
@@ -5775,7 +5718,6 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <h2>Edit</h2>
 
 <p>Update QueryHandler:</p>
@@ -5804,7 +5746,6 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>Update CommandHandler:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -5828,7 +5769,6 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 </span><span class='line'>          <span class="p">}</span>
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
-
 
 <h2>Index</h2>
 
@@ -5928,7 +5868,6 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
 </span><span class='line'>      <span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
-
 <p>So now I think you should understand the concept. You can now review the final code on github.</p>
 
 <h1>Tools used in this blog</h1>
@@ -5943,9 +5882,9 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
     <link href="http://steventcramer.github.io//blog/2015/08/23/hello-github-blog/"/>
     <updated>2015-08-23T13:01:41-04:00</updated>
     <id>http://steventcramer.github.io//blog/2015/08/23/hello-github-blog</id>
-    <content type="html"><![CDATA[<p>Creating a github blog is actually much more trouble than it should be.  If you are wanting to blog versus learning Ruby, Jekyll, git and more then don&rsquo;t use it.  I am currently using Octopress but would quickly switch if the configuration and deployment were simplified by another option.</p>
+    <content type="html"><![CDATA[<p>Creating a github blog is actually much more trouble than it should be.  If you are wanting to blog versus learning Ruby, Jekyll, git and more then don&#39;t use it.  I am currently using Octopress but would quickly switch if the configuration and deployment were simplified by another option.</p>
 
-<p><a href="https://github.com/jekyll/jekyll/issues/2551">https://github.com/jekyll/jekyll/issues/2551</a></p>
+<p>https://github.com/jekyll/jekyll/issues/2551</p>
 ]]></content>
   </entry>
   
