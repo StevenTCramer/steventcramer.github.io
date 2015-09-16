@@ -4,7 +4,7 @@
   <title><![CDATA[Cramer on Code]]></title>
   <link href="http://steventcramer.github.io//atom.xml" rel="self"/>
   <link href="http://steventcramer.github.io//"/>
-  <updated>2015-08-26T22:24:58-04:00</updated>
+  <updated>2015-09-15T20:47:03-04:00</updated>
   <id>http://steventcramer.github.io//</id>
   <author>
     <name><![CDATA[Steven T. Cramer]]></name>
@@ -69,7 +69,7 @@
     <link href="http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc/"/>
     <updated>2015-08-23T13:13:37-04:00</updated>
     <id>http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc</id>
-    <content type="html"><![CDATA[<p>This blog is a step by step tutorial that transforms a default MVC 5 application into <a href="https://lostechies.com/jimmybogard/">Jimmy Bogard&#39;s</a> Feature oriented configuration as described in his <a href="https://lostechies.com/jimmybogard/2015/07/02/ndc-talk-on-solid-in-slices-not-layers-video-online/">presentation</a>. His sample project located <a href="https://github.com/jbogard/ContosoUniversity" title="here">here</a> was used to guide the way.  The VSIX package and source code of this presentation are available <a href="http://TBD">here</a>.</p>
+    <content type="html"><![CDATA[<p>This blog is a step by step tutorial that transforms a default MVC 5 application into <a href="https://lostechies.com/jimmybogard/">Jimmy Bogard&#39;s</a> Feature oriented configuration as described in his <a href="https://lostechies.com/jimmybogard/2015/07/02/ndc-talk-on-solid-in-slices-not-layers-video-online/">presentation</a>. His sample project located <a href="https://github.com/jbogard/ContosoUniversity" title="here">here</a> was used to guide the way.  The VSIX package and source code of this presentation are available <a href="http://steventcramer.github.io//assets/pictures/jimmy-mvc/Layers.png">here</a>.</p>
 
 <!-- more -->
 
