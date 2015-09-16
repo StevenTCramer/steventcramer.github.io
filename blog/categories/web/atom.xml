@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Web | Cramer on Code]]></title>
   <link href="http://steventcramer.github.io//blog/categories/web/atom.xml" rel="self"/>
   <link href="http://steventcramer.github.io//"/>
-  <updated>2015-09-15T20:47:03-04:00</updated>
+  <updated>2015-09-15T20:51:05-04:00</updated>
   <id>http://steventcramer.github.io//</id>
   <author>
     <name><![CDATA[Steven T. Cramer]]></name>
@@ -18,7 +18,7 @@
     <link href="http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc/"/>
     <updated>2015-08-23T13:13:37-04:00</updated>
     <id>http://steventcramer.github.io//blog/2015/08/23/jimmy-mvc</id>
-    <content type="html"><![CDATA[<p>This blog is a step by step tutorial that transforms a default MVC 5 application into <a href="https://lostechies.com/jimmybogard/">Jimmy Bogard&#39;s</a> Feature oriented configuration as described in his <a href="https://lostechies.com/jimmybogard/2015/07/02/ndc-talk-on-solid-in-slices-not-layers-video-online/">presentation</a>. His sample project located <a href="https://github.com/jbogard/ContosoUniversity" title="here">here</a> was used to guide the way.  The VSIX package and source code of this presentation are available <a href="/assets/pictures/jimmy-mvc/Layers.png">here</a>.</p>
+    <content type="html"><![CDATA[<p>This blog is a step by step tutorial that transforms a default MVC 5 application into <a href="https://lostechies.com/jimmybogard/">Jimmy Bogard&#39;s</a> Feature oriented configuration as described in his <a href="https://lostechies.com/jimmybogard/2015/07/02/ndc-talk-on-solid-in-slices-not-layers-video-online/">presentation</a>. His sample project located <a href="https://github.com/jbogard/ContosoUniversity" title="here">here</a> was used to guide the way.  The VSIX package and source code of this presentation are available <a href="/assets/pictures/jimmy-mvc/JimmyMvcVsixProject.vsix">here</a>.</p>
 
 <!-- more -->
 
@@ -2039,7 +2039,7 @@ This gives us a better way of handling the lifecycle of DbContexts</p>
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
-AjaxValidation.js</h2>
+<h2>AjaxValidation.js</h2>
 
 <p>Create the AjaxValidation.js file in the Scripts folder as follows:</p>
 <div class="highlight"><pre><code class="language-JavaScript" data-lang="JavaScript"><span class="kd">var</span> <span class="nx">highlightFields</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
@@ -2241,8 +2241,7 @@ AjaxValidation.js</h2>
             <span class="k">public</span> <span class="kt">int?</span> <span class="n">UserId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
         <span class="p">}</span>
 </code></pre></div>
-<h2>User.Edit.QueryValidator</h2>
-
+<h2>User.Edit.QueryValidator
 <p>We will add validation for this query using the FluentValidation.  Add a nested QueryValidation class as follows:</p>
 <div class="highlight"><pre><code class="language-csharp" data-lang="csharp">        <span class="k">public</span> <span class="k">class</span> <span class="nc">QueryValidator</span> <span class="p">:</span> <span class="n">AbstractValidator</span><span class="p">&lt;</span><span class="n">Query</span><span class="p">&gt;</span>
         <span class="p">{</span>
@@ -2342,7 +2341,8 @@ AjaxValidation.js</h2>
             <span class="p">}</span>
         <span class="p">}</span>
 </code></pre></div>
-<h2>MappingProfile
+<h2>MappingProfile</h2>
+
 <p>Create the Map between a User and the Command  and also the reverse.</p>
 <div class="highlight"><pre><code class="language-csharp" data-lang="csharp">        <span class="k">public</span> <span class="k">class</span> <span class="nc">MappingProfile</span> <span class="p">:</span> <span class="n">Profile</span>
         <span class="p">{</span>
@@ -2617,7 +2617,7 @@ Create the <code>Delete</code> class in the <code>User</code> folder. </p>
             <span class="p">}</span>
         <span class="p">}</span>
 </code></pre></div>
-User.Delete.UiController</h2>
+<h2>User.Delete.UiController</h2>
 <div class="highlight"><pre><code class="language-csharp" data-lang="csharp">        <span class="k">public</span> <span class="k">class</span> <span class="nc">UiController</span> <span class="p">:</span> <span class="n">Controller</span>
         <span class="p">{</span>
             <span class="k">private</span> <span class="k">readonly</span> <span class="n">IMediator</span> <span class="n">mediator</span><span class="p">;</span>
@@ -2653,7 +2653,7 @@ User.Delete.UiController</h2>
             <span class="p">}</span>
         <span class="p">}</span>
 </code></pre></div>
-<h2>Delete.cshtml</h2>
+Delete.cshtml</h2>
 <div class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="n">@using</span> <span class="n">JimmyMvc</span><span class="p">.</span><span class="n">Features</span><span class="p">.</span><span class="n">User</span>
 <span class="n">@model</span> <span class="n">Delete</span><span class="p">.</span><span class="n">Command</span>
 
@@ -2705,11 +2705,11 @@ User.Delete.UiController</h2>
 
 <p>Build, run test.</p>
 
-<h1>Mediated Controllers
+<h1>Mediated Controllers</h1>
+
 <p>Create a folder under Infrastructure named <code>MediatedControllers</code></p>
 
-<h2>MediatedController</h2>
-
+<h2>MediatedController
 <p>Reviewing the UiControllers we notice many of them start with</p>
 <div class="highlight"><pre><code class="language-csharp" data-lang="csharp">        <span class="k">public</span> <span class="k">class</span> <span class="nc">UiController</span> <span class="p">:</span> <span class="n">Controller</span>
         <span class="p">{</span>
@@ -2742,7 +2742,7 @@ create a <code>MediatedController</code> class in <code>MediatedControllers</cod
 </code></pre></div>
 <p>Now we could change all the controllers that require a mediator to inherit from <code>MediatedController</code> instead of <code>Controller</code>. But hold off as we can refactor these even more DRYly.</p>
 
-MediatedGetController</h2>
+<h2>MediatedGetController</h2>
 
 <p>Notice that all of the mediated controllers <code>get</code> operations send the Query to the mediator and then send the result to the View.
 either Sync example</p>
@@ -2909,7 +2909,7 @@ Again they can do it sync or async.</p>
 
 <p>More refactoring</p>
 
-RequestHandlers #</h1>
+<h1>RequestHandlers #</h1>
 
 <p>Notice that the majority of the Handlers use a DbContext.  A single dbcontext per Handler method would normally suffice.  Although there are times that you may want to do parallel processing or even have a separate DbContext. So I want to make the normal single dbcontext easy without limiting options in case we want more control.</p>
 
@@ -3085,7 +3085,8 @@ To do this we will create specialized default QueryHandlers and CommandHandlers 
             <span class="p">}</span>
         <span class="p">}</span>
 </code></pre></div>
-<h2>Delete<div class="highlight"><pre><code class="language-text" data-lang="text">  TODO Does anything go here?
+<h2>Delete</h2>
+<div class="highlight"><pre><code class="language-text" data-lang="text">  TODO Does anything go here?
 </code></pre></div>
 <h2>Details</h2>
 
